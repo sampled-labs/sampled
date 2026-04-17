@@ -17,7 +17,7 @@ import { BsCheckCircleFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
 export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
-  const { updateBalance, xlm } = useWalletBalance();
+  const { updateBalance, usdc } = useWalletBalance();
   // const { data: hasPurchased, refetch: refetchPurchaseStatus } =
   //   useHasPurchased(sample?.id)
   const { mutate: purchaseSample, isPending: isPurchasing } =
@@ -80,14 +80,14 @@ export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
           <p className="md:text-lg">Purchase</p>
         </div>
         <p>
-          <span className="text-grey-300">Balance:</span> {xlm} XLM
+          <span className="text-grey-300">Balance:</span> {usdc} USDC
         </p>
       </div>
 
       <div className="flex gap-2 items-center">
         <Avatar src="/favicon.ico" />
         <p className="text-lg md:text-xl">
-          Price: {stroopsToXlm(sample?.price)} XLM
+          Price: {stroopsToXlm(sample?.price)} USDC
         </p>
         {isSeller ? (
           <p className="bg-primary p-1 px-2 text-xs rounded-full text-black">

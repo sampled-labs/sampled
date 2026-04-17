@@ -31,7 +31,7 @@ export const SampleListCard = ({ sample, index }: propsI) => {
         <p className="text-sm md:block hidden">{sample?.total_sales} Sales</p>
         <div className="flex gap-2 items-center">
           <Avatar src={"/favicon.ico"} size={20} />
-          <p className="text-sm">{stroopsToXlm(sample?.price)} XLM</p>
+          <p className="text-sm">{stroopsToXlm(sample?.price)} USDC</p>
         </div>
         <Link to={`/sample/${sample?.id}`}>
           <div className="md:h-[44px] h-[35px] md:w-[44px] w-[35px] rounded-full bg-primary-default flex items-center justify-center cursor-pointer">

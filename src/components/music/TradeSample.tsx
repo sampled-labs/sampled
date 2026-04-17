@@ -39,7 +39,7 @@ export const TradeSample = ({ sample }: { sample: Sample }) => {
           <div className="flex items-center gap-1">
             <TbTrendingUp />
             <p className="text-primary text-sm">
-              {stroopsToXlm(sample?.price)} XLM
+              {stroopsToXlm(sample?.price)} USDC
             </p>
           </div>
         </div>

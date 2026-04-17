@@ -20,17 +20,25 @@ const PLATFORM_FEE_KEY: Symbol = symbol_short!("P_FEE");
 const TOTAL_SAMPLES_KEY: Symbol = symbol_short!("T_SAMPLES");
 const PLATFORM_ADDRESS_KEY: Symbol = symbol_short!("P_ADDRESS");
 const TOTAL_VOLUME_KEY: Symbol = symbol_short!("T_VOLUME");
+const PAYMENT_TOKEN_KEY: Symbol = symbol_short!("PAY_TOKEN");
 
 #[contract]
 pub struct Sampled {}
 
 #[contractimpl]
 impl Sampled {
-    pub fn __constructor(env: Env, platform_fee: u32, platform_address: Address) {
+    pub fn __constructor(
+        env: Env,
+        platform_fee: u32,
+        platform_address: Address,
+        payment_token: Address,
+    ) {
         let storage = env.storage().instance();
         if storage.has(&PLATFORM_ADDRESS_KEY) {
             panic!("Contract already exists");
         }
+
+        storage.set(&PAYMENT_TOKEN_KEY, &payment_token);
 
         storage.set(&PLATFORM_ADDRESS_KEY, &platform_address);
         storage.set(&PLATFORM_FEE_KEY, &platform_fee);
@@ -202,7 +210,7 @@ impl Sampled {
             env.storage().instance().get(&PLATFORM_ADDRESS_KEY).unwrap();
 
         // Transfer payment from buyer to contract
-        let xlm_token = token::Client::new(&env, &get_xlm_token_address(&env));
+        let xlm_token = token::Client::new(&env, &get_payment_token(&env));
         xlm_token.transfer(&buyer, &env.current_contract_address(), &sample.price);
 
         // Update seller earnings
@@ -307,7 +315,7 @@ impl Sampled {
         }
 
         // Transfer earnings to user
-        let xlm_token = token::Client::new(&env, &get_xlm_token_address(&env));
+        let xlm_token = token::Client::new(&env, &get_payment_token(&env));
         xlm_token.transfer(&env.current_contract_address(), &user, &earnings);
 
         // Reset user's earnings
@@ -345,11 +353,18 @@ impl Sampled {
 }
 
 // Helper function to get XLM token address
-fn get_xlm_token_address(env: &Env) -> Address {
+fn _get_xlm_token_address(env: &Env) -> Address {
     // On testnet, use the native token address
     // This is a placeholder - replace with actual XLM token address for your network
     Address::from_string(&String::from_str(
         env,
         "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
     ))
+}
+
+fn get_payment_token(env: &Env) -> Address {
+    env.storage()
+        .instance()
+        .get(&PAYMENT_TOKEN_KEY)
+        .expect("Payment token not set")
 }

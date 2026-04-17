@@ -41,7 +41,7 @@ export const SampleDetails = () => {
           <p>Pair</p>
         </div>
         <div className="flex items-center gap-1">
-          <p>XLM</p>
+          <p>USDC</p>
         </div>
       </div>
       <div className="flex items-center gap-4 justify-between p-4 py-3 rounded-lg">

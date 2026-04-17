@@ -11,7 +11,7 @@ import { CopyOutlined, DisconnectOutlined } from "@ant-design/icons";
 export const WalletButton = () => {
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const { address, isPending } = useWallet();
-  const { xlm } = useWalletBalance();
+  const { usdc } = useWalletBalance();
   const buttonLabel = isPending ? "Loading..." : "Connect";
 
   const copyAddress = async () => {
@@ -36,7 +36,7 @@ export const WalletButton = () => {
     <div className="flex items-center gap-3">
       <Text as="div" size="sm" className="md:flex items-center gap-2 hidden">
         <span className="text-grey-300">Balance:</span>
-        <span className="font-medium">{xlm} XLM</span>
+        <span className="font-medium">{usdc} USDC</span>
       </Text>
 
       <Modal
@@ -72,7 +72,7 @@ export const WalletButton = () => {
           <div className="bg-grey-900 rounded-lg p-4">
             <div className="flex justify-between items-center">
               <span className="text-grey-300">Balance</span>
-              <span className="text-grey-0 font-medium">{xlm} XLM</span>
+              <span className="text-grey-0 font-medium">{usdc} USDC</span>
             </div>
           </div>
 

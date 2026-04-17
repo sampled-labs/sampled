@@ -74,7 +74,7 @@ export const UserProfile = () => {
           <div>
             <p className="text-sm text-white/80">Earnings</p>
             <p className="text-[17px] font-semibold">
-              {stroopsToXlm(earnings ?? 0)} XLM
+              {stroopsToXlm(earnings ?? 0)} USDC
             </p>
           </div>
           <div>

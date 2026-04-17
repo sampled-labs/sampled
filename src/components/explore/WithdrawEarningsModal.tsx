@@ -76,7 +76,7 @@ export const WithdrawEarningsModal = () => {
             <p>Amount to withdraw:</p>
             <div className="flex items-center gap-2 mt-2">
               <Avatar src="/favicon.ico" size={24} />
-              <p className="text-lg">{stroopsToXlm(earnings || 0)} XLM</p>
+              <p className="text-lg">{stroopsToXlm(earnings || 0)} USDC</p>
             </div>
           </div>
           <div className="bg-amber-500/10 p-3 rounded-lg">

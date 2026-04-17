@@ -501,7 +501,7 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
                         handleInputChange("price", e.target.value)
                       }
                     />
-                    <span className="price-currency">XLM</span>
+                    <span className="price-currency">USDC</span>
                   </div>
                   {errors.price && (
                     <div className="error-text">{errors.price}</div>
@@ -566,7 +566,7 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
                   </div>
                   <div className="stat-card">
                     <div className="stat-label">You Earn</div>
-                    <div className="stat-value">{calculateEarnings()} XLM</div>
+                    <div className="stat-value">{calculateEarnings()} USDC</div>
                   </div>
                 </div>
               </div>
