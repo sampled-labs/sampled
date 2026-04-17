@@ -13,6 +13,7 @@ import type { u32, u64, i128 } from "@stellar/stellar-sdk/contract";
 export * from "@stellar/stellar-sdk";
 export * as contract from "@stellar/stellar-sdk/contract";
 export * as rpc from "@stellar/stellar-sdk/rpc";
+import { contractId } from "../util/contract";
 
 if (typeof window !== "undefined") {
   //@ts-ignore Buffer exists
@@ -22,7 +23,7 @@ if (typeof window !== "undefined") {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
   },
 } as const;
 

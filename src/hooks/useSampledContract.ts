@@ -6,8 +6,10 @@ import { useWallet } from "./useWallet";
 import { IUploadSamplePayload } from "../@types/sample";
 import * as Client from "./../@types/stellar-generated";
 import { rpcUrl } from "../contracts/util";
+
 import { toast } from "sonner";
 import { IoCloseCircleSharp } from "react-icons/io5";
+import { contractId } from "../util/contract";
 
 export interface IPurchaseSamplePayload {
   buyer: string; // Buyer's address
@@ -30,7 +32,7 @@ export const useUploadSample = () => {
   const { address, signTransaction } = useWallet();
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -79,7 +81,7 @@ export const useGetUserSamples = () => {
   const { address } = useWallet();
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -99,7 +101,7 @@ export const useGetAllSamples = () => {
   const { address } = useWallet();
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -117,7 +119,7 @@ export const useGetSample = (sample_id: string) => {
   const { address } = useWallet();
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -139,7 +141,7 @@ export const usePurchaseSample = () => {
 
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -214,7 +216,7 @@ export const useHasPurchased = (sampleId: number) => {
 
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -240,7 +242,7 @@ export const useGetUserPurchases = () => {
   const { address } = useWallet();
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -260,7 +262,7 @@ export const useGetStats = () => {
   const { address } = useWallet();
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -278,7 +280,7 @@ export const useGetUserEarnings = () => {
   const { address } = useWallet();
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,
@@ -298,7 +300,7 @@ export const useWithdrawEarnings = () => {
 
   const client = new Client.Client({
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CDSCV2AJ2QUKSNBFFPPXY2FRIO2SWYSONM66XO6QTN4N326MRSWY6DDT",
+    contractId,
     rpcUrl,
     allowHttp: true,
     publicKey: address,

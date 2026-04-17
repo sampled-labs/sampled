@@ -15,3 +15,6 @@ export function shortenContractId(
   const end = id.slice(-suffixLength);
   return `${start}…${end}`;
 }
+
+export const contractId =
+  "CDNSV67P22CRNMSLV5AEWPKL457PCR5JJISYOKPA5NED5L7WUZJFQEJY";
