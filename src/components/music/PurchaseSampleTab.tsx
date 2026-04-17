@@ -5,7 +5,8 @@ import { useWalletBalance } from "../../hooks/useWalletBalance";
 import { Sample } from "../../@types/stellar-generated";
 import {
   stroopsToXlm,
-  useHasPurchased,
+  useGetUserPurchases,
+  // useHasPurchased,
   usePurchaseSample,
 } from "../../hooks/useSampledContract";
 import { connectWallet } from "../../util/wallet";
@@ -16,13 +17,21 @@ import { BsCheckCircleFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
 export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
-  const { balances, updateBalance } = useWalletBalance();
-  const { data: hasPurchased, refetch: refetchPurchaseStatus } =
-    useHasPurchased(sample?.id);
+  const { updateBalance, xlm } = useWalletBalance();
+  // const { data: hasPurchased, refetch: refetchPurchaseStatus } =
+  //   useHasPurchased(sample?.id)
   const { mutate: purchaseSample, isPending: isPurchasing } =
     usePurchaseSample();
   const { address } = useWallet();
   const isSeller = address === sample?.seller;
+  const { data: purchases, refetch: refetchUserPurchases } =
+    useGetUserPurchases();
+  const hasPurchased = Boolean(
+    purchases?.find(
+      (purchase) =>
+        purchase.id === sample.id && purchase.seller === sample.seller,
+    ),
+  );
 
   const handlePurchase = async () => {
     if (!address) {
@@ -50,7 +59,8 @@ export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
             </Link>
           ),
         });
-        refetchPurchaseStatus();
+        // refetchPurchaseStatus()
+        refetchUserPurchases();
         updateBalance();
 
         // Optionally auto-download after purchase
@@ -70,8 +80,7 @@ export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
           <p className="md:text-lg">Purchase</p>
         </div>
         <p>
-          <span className="text-grey-300">Balance:</span>{" "}
-          {Number(Number(balances[0]?.balance).toFixed(3)).toLocaleString()} XLM
+          <span className="text-grey-300">Balance:</span> {xlm} XLM
         </p>
       </div>
 
@@ -92,6 +101,7 @@ export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
           <></>
         )}
       </div>
+
       {!hasPurchased && !isSeller ? (
         <div className="space-y-2">
           <Button
