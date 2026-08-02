@@ -46,7 +46,7 @@ export const ReImagine = () => {
                 </span>
               </p>
               <p className="relative z-[2] bg-grey-800 md:max-w-[300px] max-w-[300px] md:text-lg leading-[22px] p-5 pt-0 md:p-0">
-                The First Producer and Music Martketplace on Stellar
+                Programmable Music IP Infrastructure on Stellar
               </p>
             </div>
             <div className="h-full absolute top-0 right-0 opacity-10 hidden">
@@ -66,7 +66,7 @@ export const ReImagine = () => {
                 </span>
               </p>
               <p className="relative z-[2] bg-grey-900 md:max-w-[300px] max-w-[300px] md:text-lg leading-[22px] p-5 pt-0 md:p-0">
-                Built for instant, low-cost transactions.
+                5-second finality. Micro-royalties that flow automatically.
               </p>
             </div>
             <div className="h-full absolute top-0 right-0 opacity-10 hidden">
@@ -86,7 +86,7 @@ export const ReImagine = () => {
                 </span>
               </p>
               <p className="relative z-[2] bg-grey-800 md:max-w-[300px] max-w-[300px] md:text-lg leading-[22px] p-5 pt-0 md:p-0">
-                Every interaction feels like you're part of the culture.
+                Royalty Tokens let fans invest in songs they believe in.
               </p>
             </div>
             <div className="h-full absolute top-0 right-0 opacity-10 hidden">

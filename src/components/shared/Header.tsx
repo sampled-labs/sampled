@@ -20,10 +20,15 @@ const routes = [
     route: "/my-samples",
   },
   {
-    label: "Docs",
-    route: "https://github.com/osas2211/sampled",
-    target: "_blank",
+    label: "Join the Waitlist",
+    route: "/waitlist",
+    target: "",
   },
+  // {
+  //   label: "Docs",
+  //   route: "https://github.com/osas2211/sampled",
+  //   target: "_blank",
+  // },
 ];
 
 export const Header = () => {

@@ -12,6 +12,7 @@ import { SmoothScroll } from "./components/SmoothScroll.tsx";
 import { Loader } from "./components/shared/Loader.tsx";
 import { OnboardingProvider } from "./context/onboarding-context.tsx";
 import { Toaster } from "sonner";
+import { WaitlistFormProvider } from "./context/waitlist-form-context.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,11 +32,13 @@ createRoot(document.getElementById("root") as HTMLElement).render(
             <BrowserRouter>
               <AntConfigProvider>
                 <OnboardingProvider>
-                  <SmoothScroll>
-                    <Loader />
-                    <App />
-                    <Toaster />
-                  </SmoothScroll>
+                  <WaitlistFormProvider>
+                    <SmoothScroll>
+                      <Loader />
+                      <App />
+                      <Toaster />
+                    </SmoothScroll>
+                  </WaitlistFormProvider>
                 </OnboardingProvider>
               </AntConfigProvider>
             </BrowserRouter>

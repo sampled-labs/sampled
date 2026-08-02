@@ -11,6 +11,7 @@ import InAppLayout from "./components/layout/InAppLayout.tsx";
 import SamplePage from "./pages/SamplePage.tsx";
 import { MarketPlace } from "./components/explore/MarketPlace.tsx";
 import MySamplesPage from "./pages/MySamples.tsx";
+import WaitlistFormPage from "./pages/Waitlist.tsx";
 
 const AppLayout: React.FC = () => (
   <main>
@@ -65,6 +66,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/onboard" element={<OnBoardPage />} />
+      <Route path="/waitlist" element={<WaitlistFormPage />} />
       <Route path="/upload-sample" element={<UploadSamplePage />} />
       <Route element={<InAppLayout />}>
         <Route path="/explore" element={<ExplorePage />} />

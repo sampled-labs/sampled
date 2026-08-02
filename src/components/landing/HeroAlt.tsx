@@ -112,9 +112,10 @@ export const HeroAlt = () => {
         <div className="flex md:flex-row flex-col md:items-end md:justify-between md:gap-4 gap-[50px] hero-btm-text relative z-[5]">
           <div className="max-w-[500px] space-y-10 md:space-y-10">
             <p className=" text-pale-grey tracking-wider md:text-[16px] text-sm relative hero-caption">
-              THE PRODUCER MARKETPLACE THAT GETS YOU SAMPLED. UPLOAD YOUR BEATS.
-              SET YOUR PRICE. GET PAID INSTANTLY. NO MIDDLEMEN. NO WAITING. IT'S
-              TIME TO GET SAMPLED.
+              A TWO-LAYER MUSIC PLATFORM HARMONIZING PRODUCERS, ARTISTS, AND
+              FANS. REGISTER YOUR MUSIC IP. DEFINE LICENSING TERMS. GET PAID
+              INSTANTLY WITH AUTOMATIC ROYALTY SPLITS. BUILT ON STELLAR
+              BLOCKCHAIN.
             </p>
 
             <Link
@@ -173,8 +174,8 @@ export const HeroAlt = () => {
             }}
           />
           <div className="text-lg md:text-xl space-y-0 mt-2 hero-video-text">
-            <p>Upload once. Get Sampled forever.</p>
-            <p>Instant payments on Stellar.</p>
+            <p>Music IP Assets. Royalty Tokens. Instant Payments.</p>
+            <p>5-second finality on Stellar.</p>
           </div>
         </div>
       </div>

@@ -56,21 +56,21 @@ export const About = () => {
     <div className="relative md:my-[0px] mt-[40px] py-7 overflow-hidden about">
       <div className="px-4 md:px-[3rem] py-[2rem] md:py-[2.5rem]">
         <div className="border-t-[1px] border-grey-400 py-[1rem] md:py-[1rem] flex justify-between gap-4 md:flex-row flex-col">
-          <p className="text-xs text-grey-200 uppercase">[ music culture ]</p>
-          <div className="max-w-[450px] md:text-xl">
+          <p className="text-xs text-grey-200 uppercase">
+            [ music IP infrastructure ]
+          </p>
+          <div className="max-w-[500px] md:text-xl">
             <p className="md:text-end">
-              Finally, a{" "}
-              <span className="text-primary underline">marketplace</span> on
-              Stellar where
+              A{" "}
+              <span className="text-primary underline">two-layer platform</span>{" "}
+              where artists register tracks as
             </p>
             <p className="">
-              producers own their work, set their prices, and get paid the
-              moment{" "}
-              <span className="text-primary underline"> someone buys</span>{" "}
-              their sample. Built for instant,{" "}
-              <span className="text-primary underline">
-                low-cost transactions.
-              </span>
+              <span className="text-primary underline">Music IP Assets</span>,
+              define licensing terms, and receive{" "}
+              <span className="text-primary underline">instant payments</span>{" "}
+              from licenses and remixes — with automatic royalty splits to all
+              stakeholders.
             </p>
           </div>
         </div>
@@ -79,31 +79,36 @@ export const About = () => {
         <p className="text-xs inline-block px-2 py-1 border-[1px] rounded-full uppercase font-semibold">
           About <span className="text-primary font-pixter">SAMPLED</span>
         </p>
-        <h2 className="max-w-[650px] text-lg md:text-2xl mt-4 md:mt-5 leading-[1.5] top-desc-3">
-          Upload your sample and set your price in USDC. When a producer buys
-          it, you get 90% instantly. They get the file + commercial license
-          immediately. No waiting for monthly payouts. No 50% platform fees.
-          Just instant payments for your creativity.
+        <h2 className="max-w-[700px] text-lg md:text-2xl mt-4 md:mt-5 leading-[1.5] top-desc-3">
+          <span className="text-primary">Layer 1 (B2B):</span> Register tracks
+          as Music IP Assets, define licensing terms via Programmable Music
+          Licenses, and receive instant payments from licenses and remixers.{" "}
+          <span className="text-primary">Layer 2 (B2C):</span> Fans stream, tip
+          artists, and purchase Royalty Tokens to invest in songs they believe
+          in.
         </h2>
 
         <div className="mt-5 md:mt-16 flex md:flex-row flex-col gap-2 justify-between">
           <div className="font-semibold">
             <p className="top-desc">
-              For <span className="text-primary">Producers</span>
+              For <span className="text-primary">Creators & Fans</span>
             </p>
-            <p className="top-desc">Transform creativity into assets</p>
+            <p className="top-desc">Music IP that works for everyone</p>
           </div>
 
           <div>
-            <p className="max-w-[450px] leading-[1.7] top-desc-1">
-              Sampled showcases why Stellar beats Ethereum for marketplaces:
-              instant payments, negligible fees, and real-time settlement. I
-              chose samples because producers feel the pain of slow payments
-              most acutely. But this same architecture works for any digital
-              commerce. Sampled isn't just a marketplace - it's a movement.
-              Every interaction should feel like you're part of the culture.
-              Getting Sampled isn't just selling a beat, it's validation. It's
-              success. It's making it.
+            <p className="max-w-[480px] leading-[1.7] top-desc-1">
+              <span className="text-primary">For Artists:</span> Programmable
+              licensing encoded on-chain. Revenue propagates upstream through
+              derivative chains. Direct fan monetization through Royalty Token
+              sales, tips, and memberships. 5-second finality means royalties
+              arrive in real-time.
+            </p>
+            <p className="max-w-[480px] leading-[1.7] top-desc-1 mt-3">
+              <span className="text-primary">For Fans:</span> Purchase Royalty
+              Tokens to earn from tracks you believe in. Direct support through
+              tips and memberships. Financial alignment with artist success.
+              This isn't just a marketplace — it's a movement.
             </p>
             <Link
               to="/market/all"
