@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { MusicPreference } from "../components/onboarding/MusicPreference";
 import { OnboardCompleted } from "../components/onboarding/OnboardCompleted";
+import { SEO } from "../components/shared/SEO";
 
 const OnBoardPage = () => {
   const {
@@ -25,6 +26,12 @@ const OnBoardPage = () => {
   }, [step]);
   return (
     <div className="md:py-[5rem] py-12 px-4 max-w-[700px] mx-auto">
+      <SEO
+        title="Get Started"
+        description="Set up your Sampled profile. Tell us about yourself, choose your avatar, and select your music preferences."
+        url="/onboard"
+        noIndex
+      />
       <div className="flex items-center justify-center flex-col gap-4 md:gap-6 mb-6 md:mb-8 max-w-[450px] mx-auto">
         <Logo />
         <div className="flex gap-4 items-center w-full">

@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { MusicPreference } from "../components/waitlist/MusicPreference";
 import { WaitlistCompleted } from "../components/waitlist/WaitlistCompleted";
+import { SEO } from "../components/shared/SEO";
 
 const WaitlistFormPage = () => {
   const {
@@ -26,11 +27,25 @@ const WaitlistFormPage = () => {
 
   // Full-page layout for completed state
   if (step === 3) {
-    return <WaitlistCompleted />;
+    return (
+      <>
+        <SEO
+          title="Waitlist"
+          description="Join the Sampled waitlist. Be the first to know when we launch."
+          url="/waitlist"
+        />
+        <WaitlistCompleted />
+      </>
+    );
   }
 
   return (
     <div className="md:py-[5rem] py-12 px-4 max-w-[700px] mx-auto">
+      <SEO
+        title="Join the Waitlist"
+        description="Join the Sampled waitlist. Be the first to know when we launch."
+        url="/waitlist"
+      />
       <div className="flex items-center justify-center flex-col gap-4 md:gap-6 mb-6 md:mb-8 max-w-[450px] mx-auto">
         <h3 className="font-pixter text-2xl">
           Join The <span className="text-primary">waitlist</span>

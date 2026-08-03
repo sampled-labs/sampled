@@ -1,0 +1,16 @@
+# Sampled - Music IP Platform
+# https://www.stellarsampled.com
+
+User-agent: *
+Allow: /
+
+# Disallow private/user-specific pages
+Disallow: /my-samples
+Disallow: /onboard
+Disallow: /debug
+
+# Sitemap
+Sitemap: https://www.stellarsampled.com/sitemap.xml
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1

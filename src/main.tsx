@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import App from "./App.tsx";
 import "@stellar/design-system/build/styles.min.css";
@@ -25,26 +26,28 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <div className="antialiased bg-background text-white">
-      <NotificationProvider>
-        <QueryClientProvider client={queryClient}>
-          <WalletProvider>
-            <BrowserRouter>
-              <AntConfigProvider>
-                <OnboardingProvider>
-                  <WaitlistFormProvider>
-                    <SmoothScroll>
-                      <Loader />
-                      <App />
-                      <Toaster />
-                    </SmoothScroll>
-                  </WaitlistFormProvider>
-                </OnboardingProvider>
-              </AntConfigProvider>
-            </BrowserRouter>
-          </WalletProvider>
-        </QueryClientProvider>
-      </NotificationProvider>
-    </div>
+    <HelmetProvider>
+      <div className="antialiased bg-background text-white">
+        <NotificationProvider>
+          <QueryClientProvider client={queryClient}>
+            <WalletProvider>
+              <BrowserRouter>
+                <AntConfigProvider>
+                  <OnboardingProvider>
+                    <WaitlistFormProvider>
+                      <SmoothScroll>
+                        <Loader />
+                        <App />
+                        <Toaster />
+                      </SmoothScroll>
+                    </WaitlistFormProvider>
+                  </OnboardingProvider>
+                </AntConfigProvider>
+              </BrowserRouter>
+            </WalletProvider>
+          </QueryClientProvider>
+        </NotificationProvider>
+      </div>
+    </HelmetProvider>
   </StrictMode>,
 );

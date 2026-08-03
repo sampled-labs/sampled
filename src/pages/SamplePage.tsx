@@ -11,6 +11,7 @@ import { truncateString } from "../util/string-helpers";
 import { Download } from "lucide-react";
 import { downloadAudio } from "../util/download-audio";
 import { useWallet } from "../hooks/useWallet";
+import { SEO } from "../components/shared/SEO";
 
 const SamplePage = () => {
   const { id } = useParams();
@@ -32,6 +33,13 @@ const SamplePage = () => {
   const isSeller = address === data?.seller;
   return (
     <>
+      <SEO
+        title={data?.title || "Sample"}
+        description={`Discover ${data?.title || "this sample"} on Sampled. ${data?.genre || "Music"} sample available for licensing.`}
+        url={`/sample/${id}`}
+        image={data?.cover_image || undefined}
+        type="music.song"
+      />
       <div className="grid md:grid-cols-7 gap-2 min-h-[91vh]">
         <div className="md:col-span-5">
           <div className="md:h-[19rem] bg-grey-600 rounded-t-xl py-6 pt-9 px-6 flex md:flex-row flex-col md:items-end gap-4 relative">
