@@ -53,8 +53,8 @@ export const About = () => {
     });
   });
   return (
-    <div className="relative md:my-[0px] mt-[40px] py-7 overflow-hidden about">
-      <div className="px-4 md:px-[3rem] py-[2rem] md:py-[2.5rem]">
+    <div className="relative md:my-[0px] mt-[20px] py-7 overflow-hidden about">
+      <div className="px-4 md:px-[3rem] py-[0rem] md:py-[2.5rem]">
         <div className="border-t-[1px] border-grey-400 py-[1rem] md:py-[1rem] flex justify-between gap-4 md:flex-row flex-col">
           <p className="text-xs text-grey-200 uppercase">
             [ music IP infrastructure ]

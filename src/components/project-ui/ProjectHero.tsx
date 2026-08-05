@@ -21,7 +21,7 @@ const ProjectHero = () => {
             </div>
           </div>
         </div>
-        <div className="col  md:pt-0 pt-40">
+        <div className="col  md:pt-0 pt-30">
           <div className="container">
             <div className="project-page-title">
               <AnimatedH1 delay={1}>Music IP Meets Blockchain</AnimatedH1>
