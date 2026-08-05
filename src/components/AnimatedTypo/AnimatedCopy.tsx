@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import "./AnimatedCopy.css";
 import { useEffect, useRef, useState } from "react";
 
@@ -111,11 +113,11 @@ const AnimatedCopy = ({
     },
   );
 
-  const Tag = tag;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Tag = tag as any;
 
   return (
     <Tag
-      // @ts-expect-error Message
       ref={copyRef}
       className={`animated-copy ${className}`}
       data-copy-id={copyId}
