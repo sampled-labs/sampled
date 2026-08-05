@@ -1,10 +1,12 @@
 import { Header } from "../components/shared/Header";
-import { HeroAlt } from "../components/landing/HeroAlt";
+// import { HeroAlt } from "../components/landing/HeroAlt";
 import { About } from "../components/landing/About";
 import { GetStarted } from "../components/landing/GetStarted";
 import { Footer } from "../components/landing/Footer";
 import { ReImagine } from "../components/landing/ReImagine";
 import { SEO } from "../components/shared/SEO";
+// import { HeroAlt2 } from "../components/landing/HeroAlt2"
+import ProjectHero from "../components/project-ui/ProjectHero";
 
 export const Home = () => {
   return (
@@ -15,7 +17,7 @@ export const Home = () => {
       />
       <div className="overflow-x-hidden">
         <Header />
-        <HeroAlt />
+        <ProjectHero />
         <About />
       </div>
       <ReImagine />

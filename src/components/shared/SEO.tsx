@@ -14,7 +14,7 @@ const DEFAULT_TITLE = "Sampled - Music IP Platform on Stellar Blockchain";
 const DEFAULT_DESCRIPTION =
   "Register your music as IP assets, define licensing terms, and receive instant royalty payments. A two-layer platform connecting producers, artists, and fans on Stellar blockchain.";
 const DEFAULT_IMAGE =
-  "https://www.stellarsampled.com/assets/landing/og-image.jpg";
+  "https://www.stellarsampled.com/assets/landing/og-image.png";
 const SITE_URL = "https://www.stellarsampled.com";
 const TWITTER_HANDLE = "@Osaretinfrank3";
 

@@ -35,11 +35,11 @@ export const Header = () => {
   const lines = [1, 2, 3, 4, 5, 6, 7, 8];
 
   return (
-    <div className="p-4 md:px-14 relative">
+    <div className="p-4 md:px-14 absolute top-0 left-0 w-full z-[20]">
       <div className="flex items-center justify-between md:max-w-[1200px] 2xl:max-w-full mx-auto">
         <Logo />
 
-        <nav className="bg-grey-800 p-5 px-10  md:grid grid-cols-4 items-center justify-between gap-4 w-[750px] relative h-full overflow-hidden hidden">
+        <nav className="bg-grey-900 p-5 px-10  md:grid grid-cols-4 items-center justify-between gap-4 w-[750px] relative h-full overflow-hidden hidden">
           {routes.map((route, index) => {
             return (
               <Link
