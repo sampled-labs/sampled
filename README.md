@@ -90,12 +90,18 @@ Our submission demonstrates the three key requirements:
 
 ### Smart Contract Functions:
 
-- `upload_sample()` - List new samples with metadata
-- `purchase_sample()` - Buy samples with automatic payment splitting
-- `withdraw_earnings()` - Producers withdraw accumulated earnings
-- `get_sample()` - View sample details
-- `get_earnings()` - Check withdrawable balance
-- `get_stats()` - Platform statistics
+- `__constructor(platform_fee: u32, platform_address: Address, payment_token: Address)` - Initializes platform fee percentage, recipient address, and payment token
+- `upload_sample(seller: Address, price: i128, title: String, bpm: u32, key: String, genre: String, ipfs_link: String, ipfs_hash: String) -> Result<u32, Error>` - Lists new audio samples with licensing metadata
+- `get_sample(sample_id: u32) -> Result<Sample, Error>` - Retrieves detailed sample metadata by ID
+- `update_price(caller: Address, sample_id: u32, new_price: i128) -> Result<(), Error>` - Updates the listing price for a sample (seller authorization required)
+- `get_user_samples(user_address: Address) -> Vec<Sample>` - Lists all audio samples uploaded by a specific creator
+- `get_all_samples() -> Vec<Sample>` - Enumerates all active marketplace sample listings
+- `purchase_sample(buyer: Address, sample_id: u32) -> Result<String, Error>` - Purchases a sample with automated split payment (platform fee + seller credit) and returns the IPFS audio link
+- `get_user_purchases(buyer: Address) -> Vec<Sample>` - Retrieves the full list of samples purchased by a buyer
+- `has_purchased(buyer: Address, sample_id: u32) -> bool` - Verifies whether a user has already purchased a specific sample
+- `withdraw_earnings(user: Address) -> Result<i128, Error>` - Transfers accumulated sales earnings to the creator
+- `get_stats() -> (u32, i128)` - Returns overall platform statistics: `(total_samples, total_volume)`
+- `get_earnings(user: Address) -> i128` - Queries the current withdrawable balance for an account
 
 ### Tech Stack:
 
