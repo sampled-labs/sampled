@@ -45,16 +45,17 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
   };
 
   const hidePlayer = () => {
+    // Pausing is idempotent; toggling here previously started paused audio.
+    audioPlayer.pause();
     setIsPlayerVisible(false);
     setCurrentTrack(null);
-    audioPlayer.togglePlay();
   };
 
   useEffect(() => {
-    if (isPlayerVisible) {
-      audioPlayer.togglePlay();
+    if (isPlayerVisible && currentTrack) {
+      audioPlayer.play();
     }
-  }, [isPlayerVisible]);
+  }, [isPlayerVisible, currentTrack, audioPlayer.play]);
 
   return (
     <AudioPlayerContext
