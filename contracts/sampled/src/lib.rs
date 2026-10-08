@@ -42,7 +42,8 @@ impl Sampled {
 
         storage.set(&PLATFORM_ADDRESS_KEY, &platform_address);
         storage.set(&PLATFORM_FEE_KEY, &platform_fee);
-        storage.set(&TOTAL_SAMPLES_KEY, &0u32);
+        // upload_sample maintains this counter in persistent storage.
+        env.storage().persistent().set(&TOTAL_SAMPLES_KEY, &0u32);
         storage.set(&TOTAL_VOLUME_KEY, &0i128);
 
         log!(
@@ -330,15 +331,15 @@ impl Sampled {
 
     // Get platform stats
     pub fn get_stats(env: Env) -> (u32, i128) {
-        let total_samples = env
+        let total_samples: u32 = env
             .storage()
-            .instance()
-            .get(&StorageKey::TotalSamples)
+            .persistent()
+            .get(&TOTAL_SAMPLES_KEY)
             .unwrap_or(0);
-        let total_volume = env
+        let total_volume: i128 = env
             .storage()
             .instance()
-            .get(&StorageKey::TotalVolume)
+            .get(&TOTAL_VOLUME_KEY)
             .unwrap_or(0);
         (total_samples, total_volume)
     }
@@ -367,4 +368,40 @@ fn get_payment_token(env: &Env) -> Address {
         .instance()
         .get(&PAYMENT_TOKEN_KEY)
         .expect("Payment token not set")
+}
+
+#[cfg(test)]
+mod stats_tests {
+    use super::*;
+    use soroban_sdk::testutils::Address as _;
+
+    #[test]
+    fn stats_reflect_uploaded_samples_and_stored_volume() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let seller = Address::generate(&env);
+        let platform = Address::generate(&env);
+        let token = Address::generate(&env);
+        let id = env.register(Sampled, (10u32, platform, token));
+        let contract = SampledClient::new(&env, &id);
+
+        assert_eq!(contract.get_stats(), (0, 0));
+        let first_id = contract.upload_sample(
+            &seller,
+            &150i128,
+            &String::from_str(&env, "ipfs://sample"),
+            &String::from_str(&env, "Sample"),
+            &120u32,
+            &String::from_str(&env, "other"),
+            &String::from_str(&env, "ipfs://cover"),
+        );
+        assert_eq!(first_id, 0);
+        assert_eq!(contract.get_stats(), (1, 0));
+
+        // purchase_sample increments this same instance-volume key after payment.
+        env.as_contract(&id, || {
+            env.storage().instance().set(&TOTAL_VOLUME_KEY, &150i128);
+        });
+        assert_eq!(contract.get_stats(), (1, 150));
+    }
 }
