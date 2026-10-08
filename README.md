@@ -136,22 +136,22 @@ Before getting started, make sure you’ve met the requirements listed in the [S
 
 ## Quick Start
 
-To get started with a fresh Scaffold Stellar project, follow the steps below:
+To get started with Sampled locally, follow the steps below:
 
-1. Initialize a new project:
+1. Clone the repository and navigate into the project directory:
 
 ```bash
-stellar scaffold init my-project
-cd my-project
+git clone https://github.com/sampled-labs/sampled.git
+cd sampled
 ```
 
 2. Set up your development environment:
 
 ```bash
-# Copy and configure environment variables like network and STELLAR_SCAFFOLD_ENV
+# Copy and configure environment variables
 cp .env.example .env
 
-# Install frontend dependencies
+# Install dependencies
 npm install
 ```
 
