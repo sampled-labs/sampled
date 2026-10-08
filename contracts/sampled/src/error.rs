@@ -7,4 +7,5 @@ pub enum Error {
     AlreadyPurchased = 4,
     InvalidPrice = 5,
     WithdrawFailed = 6,
+    SelfPurchase = 7,
 }
