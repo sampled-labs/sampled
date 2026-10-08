@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Empty, Input } from "antd";
 import { CgSearch } from "react-icons/cg";
 import { LuLayoutGrid } from "react-icons/lu";
@@ -7,6 +8,7 @@ import { SampleCard } from "./SampleCard";
 import { SampleListCard } from "./SampleListCard";
 import { SamplesSkeletonLoader } from "./SamplesSkeletonLoader";
 import { Sample } from "../../@types/stellar-generated";
+import { filterSamplesBySearch } from "./sampleFilters";
 import { MdMusicNote } from "react-icons/md";
 
 interface propsI {
@@ -17,10 +19,22 @@ interface propsI {
 
 export const SampleList = ({ title, data, isLoading }: propsI) => {
   const [isGrid, setIsGrid] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("q") ?? "";
+  const visibleSamples = filterSamplesBySearch(data, search);
+
+  const changeSearch = (value: string) => {
+    setSearchParams((previous) => {
+      const next = new URLSearchParams(previous);
+      if (value) next.set("q", value);
+      else next.delete("q");
+      return next;
+    }, { replace: true });
+  };
   if (isLoading) {
     return <SamplesSkeletonLoader />;
   }
-  if (data?.length === 0) {
+  if (visibleSamples.length === 0) {
     return (
       <div className="mt-10 md:mt-20">
         <Empty
@@ -40,6 +54,8 @@ export const SampleList = ({ title, data, isLoading }: propsI) => {
           <div className="hidden md:block">
             <Input
               placeholder="Search title, musician.."
+              value={search}
+              onChange={(event) => changeSearch(event.target.value)}
               className="h-[45px] bg-dark-800 border-0 hover:border-[1px] active:border-[1px] md:w-[250px] w-full"
               prefix={<CgSearch className="text-primary" />}
             />
@@ -66,6 +82,8 @@ export const SampleList = ({ title, data, isLoading }: propsI) => {
         <div className="md:hidden w-full">
           <Input
             placeholder="Search title, musician.."
+              value={search}
+              onChange={(event) => changeSearch(event.target.value)}
             className="h-[45px] bg-dark-800 border-0 hover:border-[1px] active:border-[1px] md:w-[250px] w-full"
             prefix={<CgSearch className="text-primary" />}
           />
@@ -73,7 +91,7 @@ export const SampleList = ({ title, data, isLoading }: propsI) => {
       </div>
       <div className="my-5 md:my-8">
         {isGrid ? (
-          <GridView samples={data ?? []} />
+          <GridView samples={visibleSamples} />
         ) : (
           <ListView samples={data ?? []} />
         )}

@@ -2,10 +2,12 @@ import { useParams } from "react-router-dom";
 import { SampleList } from "./SampleList";
 import { GoBack } from "../shared/GoBack";
 import { useGetAllSamples } from "../../hooks/useSampledContract";
+import { filterSamplesByGenre } from "./sampleFilters";
 
 export const MarketPlace = () => {
   const { id } = useParams();
   const { isLoading, data } = useGetAllSamples();
+  const displayedSamples = filterSamplesByGenre(data ?? [], id);
 
   return (
     <div className="min-h-[90vh] w-full bg-grey-900 rounded-2xl py-4 pl-3 md:pl-6 space-y-5 md:space-y-10">
@@ -22,8 +24,8 @@ export const MarketPlace = () => {
         <div className="mt-5 md:mt-10">
           <div>
             <SampleList
-              title={id ? `${id} samples` : "Samples"}
-              data={data || []}
+              title={id && id.toLowerCase() !== "all" ? `${id} samples` : "Samples"}
+              data={displayedSamples}
               isLoading={isLoading}
             />
           </div>
