@@ -1,7 +1,9 @@
 /**
- * Dynamic Sitemap Generator for Sampled
+ * Sitemap Generator for Sampled
  *
- * This script generates a sitemap.xml file with all pages.
+ * This script generates static URL entries into public/sitemap.xml (overwriting the committed file).
+ * It emits the four static routes: /, /explore, /upload-sample, and /waitlist.
+ * Note: Dynamic sample routes (/sample/:id, /market/:id) are excluded and must be supplied from an indexer or database.
  * Run with: node scripts/generate-sitemap.js
  */
 
