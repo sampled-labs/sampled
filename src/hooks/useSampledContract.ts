@@ -5,7 +5,7 @@ import { useWallet } from "./useWallet";
 // import sampled from "../contracts/sampled"
 import { IUploadSamplePayload } from "../@types/sample";
 import * as Client from "./../@types/stellar-generated";
-import { rpcUrl } from "../contracts/util";
+import { networkPassphrase, rpcUrl } from "../contracts/util";
 
 import { toast } from "sonner";
 import { IoCloseCircleSharp } from "react-icons/io5";
@@ -31,7 +31,7 @@ export const stroopsToXlm = (stroops: bigint | string | number): number => {
 export const useUploadSample = () => {
   const { address, signTransaction } = useWallet();
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -80,7 +80,7 @@ export const useUploadSample = () => {
 export const useGetUserSamples = () => {
   const { address } = useWallet();
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -100,7 +100,7 @@ export const useGetUserSamples = () => {
 export const useGetAllSamples = () => {
   const { address } = useWallet();
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -118,7 +118,7 @@ export const useGetAllSamples = () => {
 export const useGetSample = (sample_id: string) => {
   const { address } = useWallet();
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -140,7 +140,7 @@ export const usePurchaseSample = () => {
   const queryClient = useQueryClient();
 
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -215,7 +215,7 @@ export const useHasPurchased = (sampleId: number) => {
   const { address } = useWallet();
 
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -225,7 +225,7 @@ export const useHasPurchased = (sampleId: number) => {
   return useQuery({
     queryKey: ["hasPurchased", address, sampleId],
     queryFn: async () => {
-      if (!address || !sampleId) return false;
+      if (!address || !Number.isInteger(sampleId) || sampleId < 0) return false;
 
       const response = await client.has_purchased({
         buyer: address,
@@ -234,14 +234,14 @@ export const useHasPurchased = (sampleId: number) => {
       console.log(response.result);
       return response.result || false;
     },
-    enabled: !!address && !!sampleId,
+    enabled: !!address && Number.isInteger(sampleId) && sampleId >= 0,
   });
 };
 
 export const useGetUserPurchases = () => {
   const { address } = useWallet();
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -261,7 +261,7 @@ export const useGetUserPurchases = () => {
 export const useGetStats = () => {
   const { address } = useWallet();
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -279,7 +279,7 @@ export const useGetStats = () => {
 export const useGetUserEarnings = () => {
   const { address } = useWallet();
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
@@ -299,7 +299,7 @@ export const useWithdrawEarnings = () => {
   const queryClient = useQueryClient();
 
   const client = new Client.Client({
-    networkPassphrase: "Test SDF Network ; September 2015",
+    networkPassphrase,
     contractId,
     rpcUrl,
     allowHttp: true,
