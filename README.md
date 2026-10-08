@@ -2,7 +2,8 @@
 
 **Sampled** The Decentralized Sample Marketplace Where Producers Get Paid Instantly on Stellar
 
-![alt text](images/screenshot.png)
+![Sampled Decentralized Music Sample Marketplace Interface on Stellar](images/screenshot.png)
+*Figure 1: Sampled marketplace overview displaying discoverable audio samples and instant Web3 purchasing.*
 
 Sampled showcases why Stellar beats Ethereum for marketplaces: instant payments, negligible fees, and real-time settlement. I chose samples because producers feel the pain of slow payments most acutely. But this same architecture works for any digital commerce. Sampled isn't just a marketplace - it's a movement. Every interaction should feel like you're part of the culture. Getting Sampled isn't just selling a beat, it's validation. It's success. It's making it.
 
