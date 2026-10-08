@@ -50,8 +50,8 @@ Our submission demonstrates the three key requirements:
     }
 ```
 
-- Contract Address: `CA7DGEWWS3VH5J2I4I7FFEB5UHK2MJSYWDKDQKXQM7GDNLI2IRATDTLG`
-- Network: Stellar Testnet
+- Contract Address: [`CDYVZ75YN7355DW6L2BN7SYIAUXNBGZW7FB5ANXPVO7CTU7TKKPIFZZVJ`](https://stellar.expert/explorer/testnet/contract/CDYVZ75YN7355DW6L2BN7SYIAUXNBGZW7FB5ANXPVO7CTU7TKKPIFZZVJ)
+- Network: Stellar Testnet (configured in `src/util/contract.ts`)
 - Written in Rust, compiled to WASM
 
 ### 2. Modern Frontend
