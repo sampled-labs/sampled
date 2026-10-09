@@ -7,5 +7,6 @@ pub enum Error {
     AlreadyPurchased = 4,
     InvalidPrice = 5,
     WithdrawFailed = 6,
-    SampleNotActive = 7,
+    // Match the separate #61 contribution; #55 reserves code 7 for SelfPurchase.
+    InactiveSample = 8,
 }
