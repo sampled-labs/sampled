@@ -108,7 +108,7 @@ Our submission demonstrates the three key requirements:
 ### Tech Stack:
 
 - **Blockchain**: Stellar (Soroban smart contracts)
-- **Frontend**: React 18, TypeScript, Vite
+- **Frontend**: React 19 (^19.1.1 with `@ant-design/v5-patch-for-react-19`), TypeScript, Vite
 - **Styling**: Custom CSS with animations
 - **Wallet**: Freighter via Stellar Wallet Kit
 - **Storage**: IPFS (Pinata gateway)
