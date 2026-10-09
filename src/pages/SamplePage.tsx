@@ -77,26 +77,43 @@ const SamplePage = () => {
             <div>
               <div className="flex items-center gap-5">
                 {audioPlayer.isPlaying ? (
-                  <PiPauseCircleDuotone
-                    className="text-[40px] md:text-[60px] text-primary cursor-pointer"
+                  <button
+                    type="button"
+                    aria-label="Pause sample playback"
+                    className="cursor-pointer rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                     onClick={audioPlayer.togglePlay}
-                  />
+                  >
+                    <PiPauseCircleDuotone
+                      className="text-[40px] md:text-[60px] text-primary"
+                      aria-hidden="true"
+                    />
+                  </button>
                 ) : (
-                  <PiPlayCircleDuotone
-                    className="text-[40px] md:text-[60px] text-primary cursor-pointer"
+                  <button
+                    type="button"
+                    aria-label="Play sample"
+                    className="cursor-pointer rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                     onClick={handlePlayTrack}
-                  />
+                  >
+                    <PiPlayCircleDuotone
+                      className="text-[40px] md:text-[60px] text-primary"
+                      aria-hidden="true"
+                    />
+                  </button>
                 )}
                 {(isSeller || hasPurchased) && (
-                  <Download
-                    size={27}
-                    className="cursor-pointer"
+                  <button
+                    type="button"
+                    aria-label={`Download ${data?.title || "sample"}`}
+                    className="cursor-pointer rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                     onClick={() =>
                       downloadAudio(data?.ipfs_link ?? "", `${data?.title}.mp3`)
                     }
-                  />
+                  >
+                    <Download size={27} aria-hidden="true" />
+                  </button>
                 )}
-                <BsThreeDots />
+                <BsThreeDots aria-hidden="true" />
                 {/* <PiPauseCircleDuotone className="text-[40px] md:text-[60px] text-primary" /> */}
               </div>
             </div>
