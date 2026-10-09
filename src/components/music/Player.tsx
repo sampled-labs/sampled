@@ -73,35 +73,56 @@ export const Player = ({ skipSeconds = 10 }: PlayerProps) => {
 
       <div className="flex md:flex-col flex-col-reverse">
         <div className="flex items-center justify-center gap-4">
-          <MdFastRewind
-            className="text-[25px] md:text-[35px] cursor-pointer hover:opacity-70 transition-opacity"
+          <button
+            type="button"
             onClick={handleRewind}
-            title={`Rewind ${skipSeconds}s`}
-          />
+            aria-label={`Rewind ${skipSeconds} seconds`}
+            className="hover:opacity-70 transition-opacity"
+          >
+            <MdFastRewind
+              aria-hidden="true"
+              className="text-[25px] md:text-[35px]"
+            />
+          </button>
 
           {isLoading ? (
-            <div className="w-[25px] md:w-[35px] h-[25px] md:h-[35px] border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <div
+              role="status"
+              aria-label="Loading audio"
+              className="w-[25px] md:w-[35px] h-[25px] md:h-[35px] border-2 border-white border-t-transparent rounded-full animate-spin"
+            />
           ) : (
-            <>
+            <button
+              type="button"
+              onClick={togglePlay}
+              aria-label={isPlaying ? "Pause playback" : "Play playback"}
+              className="hover:opacity-70 transition-opacity"
+            >
               {isPlaying ? (
                 <MdPauseCircleFilled
-                  className="text-[25px] md:text-[35px] cursor-pointer hover:opacity-70 transition-opacity"
-                  onClick={togglePlay}
+                  aria-hidden="true"
+                  className="text-[25px] md:text-[35px]"
                 />
               ) : (
                 <MdOutlinePlayCircleFilled
-                  className="text-[25px] md:text-[35px] cursor-pointer hover:opacity-70 transition-opacity"
-                  onClick={togglePlay}
+                  aria-hidden="true"
+                  className="text-[25px] md:text-[35px]"
                 />
               )}
-            </>
+            </button>
           )}
 
-          <MdFastForward
-            className="text-[25px] md:text-[35px] cursor-pointer hover:opacity-70 transition-opacity"
+          <button
+            type="button"
             onClick={handleFastForward}
-            title={`Forward ${skipSeconds}s`}
-          />
+            aria-label={`Forward ${skipSeconds} seconds`}
+            className="hover:opacity-70 transition-opacity"
+          >
+            <MdFastForward
+              aria-hidden="true"
+              className="text-[25px] md:text-[35px]"
+            />
+          </button>
         </div>
 
         <div>
@@ -109,6 +130,7 @@ export const Player = ({ skipSeconds = 10 }: PlayerProps) => {
             <p className="min-w-[40px]">{formatTime(currentTime)}</p>
             <Slider
               className="md:!w-[700px] !w-[70vw]"
+              ariaLabelForHandle="Playback position"
               value={progress}
               onChange={handleProgressChange}
               styles={{
@@ -125,7 +147,9 @@ export const Player = ({ skipSeconds = 10 }: PlayerProps) => {
       <div className="flex items-center gap-4">
         <div className="md:flex hidden items-center gap-1">
           <button
+            type="button"
             onClick={toggleMute}
+            aria-label={isMuted || volume === 0 ? "Unmute audio" : "Mute audio"}
             className="hover:opacity-70 transition-opacity"
           >
             {isMuted || volume === 0 ? (
@@ -136,6 +160,7 @@ export const Player = ({ skipSeconds = 10 }: PlayerProps) => {
           </button>
           <Slider
             className="!w-[200px]"
+            ariaLabelForHandle="Volume"
             value={(isMuted ? 0 : volume) * 100}
             onChange={handleVolumeChange}
             styles={{
@@ -148,9 +173,10 @@ export const Player = ({ skipSeconds = 10 }: PlayerProps) => {
 
         {/* Close button */}
         <button
+          type="button"
           onClick={hidePlayer}
+          aria-label="Close audio player"
           className="hover:opacity-70 transition-opacity"
-          title="Close player"
         >
           <MdClose className="text-[20px] md:text-[24px]" />
         </button>
