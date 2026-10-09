@@ -352,16 +352,6 @@ impl Sampled {
     }
 }
 
-// Helper function to get XLM token address
-fn _get_xlm_token_address(env: &Env) -> Address {
-    // On testnet, use the native token address
-    // This is a placeholder - replace with actual XLM token address for your network
-    Address::from_string(&String::from_str(
-        env,
-        "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
-    ))
-}
-
 fn get_payment_token(env: &Env) -> Address {
     env.storage()
         .instance()
