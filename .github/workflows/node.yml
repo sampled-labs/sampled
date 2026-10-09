@@ -51,3 +51,28 @@ jobs:
       - run: npm run build
       - name: Run tests
         run: npm test --if-present
+
+  summary:
+    name: Required build gate
+    needs: [build]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Record and enforce the build outcome
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+        shell: bash
+        run: |
+          {
+            echo '### Build-and-test aggregate gate'
+            echo ''
+            echo '| Job | Result |'
+            echo '| --- | --- |'
+            echo "| build | $BUILD_RESULT |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$BUILD_RESULT" != 'success' ]]; then
+            echo "Required build gate failed: build job result was $BUILD_RESULT" >&2
+            exit 1
+          fi
+          echo 'Required build gate passed.' >> "$GITHUB_STEP_SUMMARY"
