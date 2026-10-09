@@ -225,7 +225,7 @@ export const useHasPurchased = (sampleId: number) => {
   return useQuery({
     queryKey: ["hasPurchased", address, sampleId],
     queryFn: async () => {
-      if (!address || !sampleId) return false;
+      if (!address || !Number.isInteger(sampleId) || sampleId < 0) return false;
 
       const response = await client.has_purchased({
         buyer: address,
@@ -234,7 +234,7 @@ export const useHasPurchased = (sampleId: number) => {
       console.log(response.result);
       return response.result || false;
     },
-    enabled: !!address && !!sampleId,
+    enabled: !!address && Number.isInteger(sampleId) && sampleId >= 0,
   });
 };
 
