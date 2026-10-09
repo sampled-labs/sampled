@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseAudioPlayerProps {
   url: string;
@@ -14,6 +14,8 @@ export interface AudioPlayerData {
   isLoading: boolean;
   buffered: number;
   togglePlay: () => void;
+  play: () => void;
+  pause: () => void;
   seek: (time: number) => void;
   changeVolume: (newVolume: number) => void;
   toggleMute: () => void;
@@ -91,15 +93,25 @@ export const useAudioPlayer = ({ url }: UseAudioPlayerProps) => {
     };
   }, [url]);
 
-  const togglePlay = () => {
-    if (!audioRef.current) return;
+  const play = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    setIsPlaying(true);
+    // Keep state consistent if playback is refused (e.g. browser autoplay policy).
+    void audio.play().catch(() => setIsPlaying(false));
+  }, []);
 
+  const pause = useCallback(() => {
+    audioRef.current?.pause();
+    setIsPlaying(false);
+  }, []);
+
+  const togglePlay = () => {
     if (isPlaying) {
-      audioRef.current.pause();
+      pause();
     } else {
-      audioRef.current.play();
+      play();
     }
-    setIsPlaying(!isPlaying);
   };
 
   const seek = (time: number) => {
@@ -138,6 +150,8 @@ export const useAudioPlayer = ({ url }: UseAudioPlayerProps) => {
     isLoading,
     buffered,
     togglePlay,
+    play,
+    pause,
     seek,
     changeVolume,
     toggleMute,
