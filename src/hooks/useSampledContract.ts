@@ -10,6 +10,7 @@ import { rpcUrl } from "../contracts/util";
 import { toast } from "sonner";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { contractId } from "../util/contract";
+import { withRequiredSigner } from "../util/withRequiredSigner";
 
 export interface IPurchaseSamplePayload {
   buyer: string; // Buyer's address
@@ -44,19 +45,19 @@ export const useUploadSample = () => {
       if (!address) {
         throw new Error("Wallet not connected");
       }
-      const response = await client.upload_sample(payload);
-      response.needsNonInvokerSigningBy({ includeAlreadySigned: false });
-      if (signTransaction) {
+      return withRequiredSigner(signTransaction, async (signer) => {
+        const response = await client.upload_sample(payload);
+        response.needsNonInvokerSigningBy({ includeAlreadySigned: false });
         const txResponse = await response.signAndSend({
           force: true,
-          signTransaction: signTransaction,
+          signTransaction: signer,
         });
         return {
           id: response,
           transactionHash: txResponse.getTransactionResponse?.txHash ?? "",
           seller: payload.seller,
         };
-      }
+      });
     },
     onSuccess(data) {
       queryClient.invalidateQueries({
@@ -66,10 +67,13 @@ export const useUploadSample = () => {
         queryKey: ["all-samples"],
       });
     },
-    onError: () => {
+    onError: (error) => {
       toast.error("Error", {
         className: "!bg-red-500 *:!text-white !border-0",
-        description: "Failed to upload sample",
+        description:
+          error instanceof Error && error.message === "Unable to sign transaction"
+            ? error.message
+            : "Failed to upload sample",
         duration: 5000,
         icon: IoCloseCircleSharp({ size: 24 }),
       });
