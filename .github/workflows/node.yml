@@ -1,88 +1,83 @@
 name: Build and Test
-
 on:
   push:
-    branches: ["main"]
-  pull_request:
-
+    branches:
+    - main
+  pull_request: null
 permissions:
   contents: read
-
 env:
   CARGO_TERM_COLOR: always
   PKG_CONFIG_PATH: /usr/lib/pkgconfig
   PUBLIC_STELLAR_NETWORK: local
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    # 30-minute ceiling covers bootstrap and quickstart without hanging runners indefinitely
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            runner/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - run: rustup target add wasm32v1-none
-      - name: Start Stellar Quickstart
-        uses: stellar/quickstart@main
-        with:
-          tag: testing
-          network: local
-      - run: sudo apt-get update && sudo apt-get install -y libudev-dev libdbus-1-dev pkg-config
-      - name: Install cargo-binstall
-        uses: cargo-bins/cargo-binstall@v1.15.6
-      - name: Check for stellar-scaffold binary
-        run: |
-          if ! command -v stellar-scaffold &> /dev/null; then
-            echo "stellar-scaffold not found, installing..."
-            cargo binstall stellar-scaffold-cli
-          else
-            echo "stellar-scaffold already installed. Clear cache to force reinstall."
-          fi
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run format:check
-      - name: Build clients before building the project
-        run: STELLAR_SCAFFOLD_ENV=development stellar-scaffold build --build-clients
-      - run: npm run install:contracts
-      - name: Test sampled contract
-        run: cargo test -p sampled
-      - run: npm run build
-      - name: Run tests
-        run: npm test --if-present
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+    - uses: actions/cache@v3
+      with:
+        path: '~/.cargo/bin/
 
+          runner/.cargo/bin/
+
+          ~/.cargo/registry/index/
+
+          ~/.cargo/registry/cache/
+
+          ~/.cargo/git/db/
+
+          target/
+
+          '
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    - run: rustup target add wasm32v1-none
+    - name: Start Stellar Quickstart
+      uses: stellar/quickstart@main
+      with:
+        tag: testing
+        network: local
+    - run: sudo apt-get update && sudo apt-get install -y libudev-dev libdbus-1-dev
+        pkg-config
+    - name: Install cargo-binstall
+      uses: cargo-bins/cargo-binstall@v1.15.6
+    - name: Check for stellar-scaffold binary
+      run: "if ! command -v stellar-scaffold &> /dev/null; then\n  echo \"stellar-scaffold\
+        \ not found, installing...\"\n  cargo binstall stellar-scaffold-cli\nelse\n\
+        \  echo \"stellar-scaffold already installed. Clear cache to force reinstall.\"\
+        \nfi\n"
+    - run: npm ci
+    - name: Audit npm dependencies (high and critical)
+      run: npm run audit
+    - run: npm run lint
+    - run: npm run format:check
+    - name: Build clients before building the project
+      run: STELLAR_SCAFFOLD_ENV=development stellar-scaffold build --build-clients
+    - run: npm run install:contracts
+    - name: Test sampled contract
+      run: cargo test -p sampled
+    - run: npm run build
+    - name: Run tests
+      run: npm test --if-present
   summary:
     name: Required build gate
-    needs: [build]
+    needs:
+    - build
     if: always()
     runs-on: ubuntu-latest
     permissions: {}
     steps:
-      - name: Record and enforce the build outcome
-        env:
-          BUILD_RESULT: ${{ needs.build.result }}
-        shell: bash
-        run: |
-          {
-            echo '### Build-and-test aggregate gate'
-            echo ''
-            echo '| Job | Result |'
-            echo '| --- | --- |'
-            echo "| build | $BUILD_RESULT |"
-          } >> "$GITHUB_STEP_SUMMARY"
-          if [[ "$BUILD_RESULT" != 'success' ]]; then
-            echo "Required build gate failed: build job result was $BUILD_RESULT" >&2
-            exit 1
-          fi
-          echo 'Required build gate passed.' >> "$GITHUB_STEP_SUMMARY"
+    - name: Record and enforce the build outcome
+      env:
+        BUILD_RESULT: ${{ needs.build.result }}
+      shell: bash
+      run: "{\n  echo '### Build-and-test aggregate gate'\n  echo ''\n  echo '| Job\
+        \ | Result |'\n  echo '| --- | --- |'\n  echo \"| build | $BUILD_RESULT |\"\
+        \n} >> \"$GITHUB_STEP_SUMMARY\"\nif [[ \"$BUILD_RESULT\" != 'success' ]];\
+        \ then\n  echo \"Required build gate failed: build job result was $BUILD_RESULT\"\
+        \ >&2\n  exit 1\nfi\necho 'Required build gate passed.' >> \"$GITHUB_STEP_SUMMARY\"\
+        \n"
