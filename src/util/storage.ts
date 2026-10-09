@@ -69,9 +69,6 @@ class TypedStorage<T> {
     this.storage?.removeItem(key.toString());
   }
 
-  public clear(): void {
-    this.storage?.clear();
-  }
 }
 
 /**
