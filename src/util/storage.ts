@@ -68,10 +68,6 @@ class TypedStorage<T> {
   public removeItem<U extends keyof T>(key: U): void {
     this.storage?.removeItem(key.toString());
   }
-
-  public clear(): void {
-    this.storage?.clear();
-  }
 }
 
 /**
