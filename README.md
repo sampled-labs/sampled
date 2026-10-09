@@ -14,8 +14,14 @@ Sampled leverages Stellar's speed and low costs to create a peer-to-peer sample 
 ✅ **90/10 Revenue Split**: Only 10% platform fee vs. industry standard 30-50%  
 ✅ **Smart Contract Automation**: No intermediaries, no lawyers, no waiting  
 ✅ **IPFS Storage**: Decentralized file storage ensures content permanence  
-✅ **Commercial Licensing**: Automatic license generation with each purchase  
+✅ **Purchased Sample Access**: On-chain purchase record and the sample's stored IPFS download link (no automatic commercial licence)  
 ✅ **Freighter Wallet Integration**: Seamless Web3 experience using Stellar Wallet Kit
+
+### Licensing status — planned, not shipped
+
+The current \`purchase_sample\` contract function authenticates the buyer, transfers the configured payment token, stores a \`Purchase\` record containing the buyer, sample ID, paid price and ledger timestamp, and returns the sample's existing IPFS link for download. It **does not generate or return a commercial licence, licence identifier, licence text, or on-chain usage-rights terms**. Possession of the download link alone should not be represented as a licence to commercially exploit another producer's work.
+
+Commercial licensing is **planned**, not implemented. A future version would need explicit seller-approved usage terms and a buyer-verifiable licence or receipt binding those terms to the purchased sample. Until then, users need separate permission for uses that require it.
 
 ### Technical Implementation:
 
