@@ -6,10 +6,10 @@ evaluate them before details become public.
 
 ## Supported versions
 
-| Code or deployment | Security support |
-| --- | --- |
-| Current main branch | Intended target for security fixes and triage |
-| Unreleased forks or historical commits | Not separately maintained or supported |
+| Code or deployment                                            | Security support                                                                                          |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Current main branch                                           | Intended target for security fixes and triage                                                             |
+| Unreleased forks or historical commits                        | Not separately maintained or supported                                                                    |
 | A particular deployed contract address or older deployed WASM | Support is **not established** by this policy; include the network and contract ID in your private report |
 
 The repository does not currently publish a separately maintained release-series
