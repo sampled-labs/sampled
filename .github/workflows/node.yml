@@ -63,6 +63,13 @@ jobs:
     - run: npm run build
     - name: Run tests
       run: npm test --if-present
+    - run: npx prettier . --check
+    - name: Verify sitemap generation
+      run: 'node --test scripts/generate-sitemap.test.mjs
+
+        npm run generate:sitemap
+
+        '
   summary:
     name: Required build gate
     needs:
