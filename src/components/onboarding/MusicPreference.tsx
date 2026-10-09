@@ -1,6 +1,6 @@
-import { musicGenres } from "../../constants/genres";
 import { useOnboarding } from "../../hooks/useOnboarding";
-import { Avatar, Button } from "antd";
+import { GenrePicker } from "../shared/GenrePicker";
+import { Button } from "antd";
 
 import { BsArrowLeft } from "react-icons/bs";
 
@@ -10,43 +10,17 @@ export const MusicPreference = () => {
     data: { fields },
   } = useOnboarding();
 
+  const toggleGenre = (genre: string): void => {
+    const previous = fields.preference ?? [];
+    const next = previous.includes(genre)
+      ? previous.filter((name: string) => name !== genre)
+      : [...previous, genre];
+    onUpdateState({ fields: { ...fields, preference: next } });
+  };
+
   return (
     <div className="max-w-[650px] mx-auto">
-      <div className="flex items-center gap-4 md:gap-7 justify-center flex-wrap">
-        {musicGenres.map((genre, index) => {
-          const isSelected = fields.preference.includes(genre.name);
-          return (
-            <div
-              className={`flex items-center gap-3 px-4 py-2 rounded-md bg-grey-800 cursor-pointer ${
-                isSelected ? "!border-[1px] !border-primary" : ""
-              }`}
-              key={index}
-              onClick={() => {
-                const updatedPref = fields.preference;
-                if (!isSelected) {
-                  updatedPref.push(genre.name);
-                  onUpdateState({
-                    fields: { ...fields, preference: updatedPref },
-                  });
-                } else {
-                  const newArr = updatedPref.filter(
-                    (pref) => pref !== genre.name,
-                  );
-                  onUpdateState({
-                    fields: { ...fields, preference: newArr },
-                  });
-                }
-              }}
-            >
-              <Avatar
-                src={genre.image}
-                className={`md:!h-[2rem] md:!w-[2rem] !h-[2rem] !w-[2rem] relative transition-all `}
-              ></Avatar>
-              <p>{genre.name}</p>
-            </div>
-          );
-        })}
-      </div>
+      <GenrePicker selected={fields.preference ?? []} onToggle={toggleGenre} />
       <div className="mt-8 md:mt-10">
         <div className="flex justify-center gap-5 items-center">
           <Button
