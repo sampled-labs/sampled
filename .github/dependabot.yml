@@ -1,0 +1,26 @@
+version: 2
+updates:
+  # npm dependencies for the frontend application
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      npm-patches:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+
+  # Cargo dependencies for the Soroban smart contract workspace
+  # Note: OpenZeppelin git dependencies in Cargo.toml are pinned to specific release tags.
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      cargo-patches:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
