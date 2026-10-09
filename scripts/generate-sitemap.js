@@ -14,60 +14,84 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const SITE_URL = "https://www.stellarsampled.com";
+export const SITE_URL = "https://www.stellarsampled.com";
 
 // Static pages configuration
-const staticPages = [
+export const staticPages = [
   { url: "/", changefreq: "weekly", priority: "1.0" },
   { url: "/explore", changefreq: "daily", priority: "0.9" },
   { url: "/upload-sample", changefreq: "monthly", priority: "0.8" },
   { url: "/waitlist", changefreq: "monthly", priority: "0.7" },
 ];
 
-// Generate XML for a single URL entry
-function generateUrlEntry(loc, lastmod, changefreq, priority) {
-  return `  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>
-  </url>`;
+function escapeXml(value) {
+  const text = String(value);
+  for (const character of text) {
+    const code = character.codePointAt(0);
+    if (
+      (code < 0x20 && ![0x09, 0x0a, 0x0d].includes(code)) ||
+      (code >= 0xd800 && code <= 0xdfff) ||
+      code === 0xfffe ||
+      code === 0xffff
+    ) {
+      throw new TypeError("Sitemap fields must contain valid XML characters");
+    }
+  }
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
 }
 
-// Main sitemap generation function
-async function generateSitemap() {
-  const today = new Date().toISOString().split("T")[0];
+// Pure XML construction: importing this module does not read the clock or write.
+export function buildSitemap(pages, today) {
+  if (!Array.isArray(pages)) {
+    throw new TypeError("Sitemap pages must be an array");
+  }
+  if (typeof today !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(today)) {
+    throw new TypeError("Sitemap date must use YYYY-MM-DD");
+  }
+  const date = new Date(`${today}T00:00:00.000Z`);
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== today) {
+    throw new TypeError("Sitemap date must be a valid calendar date");
+  }
 
-  console.log("Generating sitemap...");
-  console.log("Site URL:", SITE_URL);
-
-  // Generate URL entries for static pages
-  const urlEntries = staticPages.map((page) =>
-    generateUrlEntry(
-      SITE_URL + page.url,
-      today,
-      page.changefreq,
-      page.priority,
-    ),
+  const urlEntries = pages.map(
+    (page) => `  <url>
+    <loc>${escapeXml(SITE_URL + page.url)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${escapeXml(page.changefreq)}</changefreq>
+    <priority>${escapeXml(page.priority)}</priority>
+  </url>`,
   );
 
-  console.log("Added " + staticPages.length + " static pages");
-
-  // Generate final sitemap XML
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urlEntries.join("\n")}
 </urlset>`;
+}
 
-  // Write to public directory
+async function generateSitemap() {
+  const today = new Date().toISOString().split("T")[0];
+  const sitemap = buildSitemap(staticPages, today);
   const outputPath = path.join(__dirname, "..", "public", "sitemap.xml");
-  fs.writeFileSync(outputPath, sitemap, "utf8");
 
+  console.log("Generating sitemap...");
+  console.log("Site URL:", SITE_URL);
+  console.log("Added " + staticPages.length + " static pages");
+  fs.writeFileSync(outputPath, sitemap, "utf8");
   console.log("");
   console.log("Sitemap generated successfully!");
   console.log("Output: " + outputPath);
-  console.log("Total URLs: " + urlEntries.length);
+  console.log("Total URLs: " + staticPages.length);
 }
 
-// Run the generator
-generateSitemap().catch(console.error);
+// Keep CLI generation, but make the exported builder safe to import in tests.
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  generateSitemap().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}
