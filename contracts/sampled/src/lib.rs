@@ -139,11 +139,23 @@ impl Sampled {
                     return Err(Error::NotAuthorized);
                 }
 
+                // A delisted sample cannot be repriced, even by its seller.
+                if !value.is_active {
+                    return Err(Error::InactiveSample);
+                }
+
                 if new_price <= 0 {
                     return Err(Error::InvalidPrice);
                 }
+
                 value.price = new_price;
                 storage.set(&sample_id, &value);
+                // A successful price update must preserve the listing's lifetime.
+                storage.extend_ttl(
+                    &sample_id,
+                    env.storage().max_ttl(),
+                    env.storage().max_ttl(),
+                );
             }
             None => {
                 panic!("Sample not found")
