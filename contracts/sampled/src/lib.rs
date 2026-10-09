@@ -143,20 +143,11 @@ impl Sampled {
                     return Err(Error::NotAuthorized);
                 }
 
-                if !value.is_active {
-                    return Err(Error::SampleNotActive);
-                }
                 if new_price <= 0 {
                     return Err(Error::InvalidPrice);
                 }
                 value.price = new_price;
                 storage.set(&sample_id, &value);
-                storage.extend_ttl(
-                    &sample_id,
-                    env.storage().max_ttl(),
-                    env.storage().max_ttl(),
-                );
-                sync_sample_views(&env, &value);
             }
             None => {
                 panic!("Sample not found")
@@ -220,7 +211,7 @@ impl Sampled {
 
         // Check if sample is active
         if !sample.is_active {
-            return Err(Error::SampleNotActive);
+            return Err(Error::InactiveSample);
         }
 
         // Check if already purchased
