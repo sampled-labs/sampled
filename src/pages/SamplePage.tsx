@@ -46,10 +46,13 @@ const SamplePage = () => {
             <img
               className="absolute top-0 left-0 opacity-10 w-full h-full rounded-md object-cover object-top shadow-2xl shadow-grey-900"
               src={data?.cover_image || "/favicon.ico"}
+              alt=""
+              aria-hidden="true"
             />
             <img
               className="md:w-[15rem] w-[70%] h-full rounded-md object-cover object-top shadow-2xl shadow-grey-900 relative"
               src={data?.cover_image || "/favicon.ico"}
+              alt={`${data?.title || "Sample"} cover artwork`}
             />
             <div className="relative capitalize">
               <p>{data?.genre} Sample</p>
