@@ -195,6 +195,9 @@ export const usePurchaseSample = () => {
 
       // Invalidate related queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["user-purchases", address] });
+      queryClient.invalidateQueries({
+        queryKey: ["purchase-receipt", address, data.sample_id],
+      });
       queryClient.invalidateQueries({ queryKey: ["user-earnings", address] });
       queryClient.invalidateQueries({
         queryKey: ["single-sample", data.sample_id],
@@ -235,6 +238,34 @@ export const useHasPurchased = (sampleId: number) => {
       return response.result || false;
     },
     enabled: !!address && !!sampleId,
+  });
+};
+
+/**
+ * Read the on-chain receipt for the connected buyer. Unlike the sample listing,
+ * this exposes the actual purchase price and timestamp saved at checkout.
+ */
+export const useGetPurchase = (sampleId: number) => {
+  const { address } = useWallet();
+  const client = new Client.Client({
+    networkPassphrase: "Test SDF Network ; September 2015",
+    contractId,
+    rpcUrl,
+    allowHttp: true,
+    publicKey: address,
+  });
+
+  return useQuery({
+    queryKey: ["purchase-receipt", address, sampleId],
+    enabled: !!address && Number.isInteger(sampleId) && sampleId >= 0,
+    queryFn: async () => {
+      if (!address) throw new Error("Wallet not connected");
+      const { result } = await client.get_purchase({
+        buyer: address,
+        sample_id: sampleId,
+      });
+      return result.unwrap();
+    },
   });
 };
 
