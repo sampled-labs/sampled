@@ -17,7 +17,7 @@ export const SampleHolders = () => {
       <div className="flex items-center gap-4 justify-between">
         <div className="flex items-center gap-2">
           <span className="pr-2">1.</span>
-          <Avatar src="/zorb.svg" />
+          <Avatar src="/favicon.ico" alt="Sample holder avatar" />
           <p>Market</p>
         </div>
         <Tag color="success" className="!text-[14px]">
