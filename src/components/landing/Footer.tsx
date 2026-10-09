@@ -1,5 +1,4 @@
 import { Logo } from "../shared/Logo";
-import moment from "moment";
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
@@ -61,7 +60,7 @@ export const Footer = () => {
         </h2>
       </div>
       <div className="absolute z-[1] bottom-0 right-0 w-full md:p-6 p-4 2xl:px-[6rem] md:px-[5rem] border-t-[1px] border-grey-500 text-grey-300">
-        <p>&copy; {moment().year()}. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()}. All rights reserved.</p>
       </div>
     </footer>
   );
