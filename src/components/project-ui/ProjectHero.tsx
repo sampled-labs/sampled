@@ -15,7 +15,7 @@ const ProjectHero = () => {
             <div className="project-hero-img-wrapper grayscale-80">
               <ParallaxImage
                 src="/assets/landing/image-1.jpg"
-                alt=""
+                alt="Artwork introducing Sampled, a music IP marketplace"
                 speed={0.2}
               />
             </div>

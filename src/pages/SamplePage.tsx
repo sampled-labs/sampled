@@ -46,10 +46,13 @@ const SamplePage = () => {
             <img
               className="absolute top-0 left-0 opacity-10 w-full h-full rounded-md object-cover object-top shadow-2xl shadow-grey-900"
               src={data?.cover_image || "/favicon.ico"}
+              alt=""
+              aria-hidden="true"
             />
             <img
               className="md:w-[15rem] w-[70%] h-full rounded-md object-cover object-top shadow-2xl shadow-grey-900 relative"
               src={data?.cover_image || "/favicon.ico"}
+              alt={`${data?.title || "Sample"} cover artwork`}
             />
             <div className="relative capitalize">
               <p>{data?.genre} Sample</p>
@@ -74,26 +77,43 @@ const SamplePage = () => {
             <div>
               <div className="flex items-center gap-5">
                 {audioPlayer.isPlaying ? (
-                  <PiPauseCircleDuotone
-                    className="text-[40px] md:text-[60px] text-primary cursor-pointer"
+                  <button
+                    type="button"
+                    aria-label="Pause sample playback"
+                    className="cursor-pointer rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                     onClick={audioPlayer.togglePlay}
-                  />
+                  >
+                    <PiPauseCircleDuotone
+                      className="text-[40px] md:text-[60px] text-primary"
+                      aria-hidden="true"
+                    />
+                  </button>
                 ) : (
-                  <PiPlayCircleDuotone
-                    className="text-[40px] md:text-[60px] text-primary cursor-pointer"
+                  <button
+                    type="button"
+                    aria-label="Play sample"
+                    className="cursor-pointer rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                     onClick={handlePlayTrack}
-                  />
+                  >
+                    <PiPlayCircleDuotone
+                      className="text-[40px] md:text-[60px] text-primary"
+                      aria-hidden="true"
+                    />
+                  </button>
                 )}
                 {(isSeller || hasPurchased) && (
-                  <Download
-                    size={27}
-                    className="cursor-pointer"
+                  <button
+                    type="button"
+                    aria-label={`Download ${data?.title || "sample"}`}
+                    className="cursor-pointer rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                     onClick={() =>
                       downloadAudio(data?.ipfs_link ?? "", `${data?.title}.mp3`)
                     }
-                  />
+                  >
+                    <Download size={27} aria-hidden="true" />
+                  </button>
                 )}
-                <BsThreeDots />
+                <BsThreeDots aria-hidden="true" />
                 {/* <PiPauseCircleDuotone className="text-[40px] md:text-[60px] text-primary" /> */}
               </div>
             </div>

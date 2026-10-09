@@ -18,7 +18,7 @@ export const SampleListCard = ({ sample, index }: propsI) => {
         <div className="flex items-center gap-3">
           <div>
             <img
-              alt=""
+              alt={`${sample?.title || "Sample"} cover artwork`}
               src={sample?.cover_image || "/favicon.ico"}
               className="rounded-lg object-cover h-[55px] w-[55px]"
             />
@@ -33,7 +33,10 @@ export const SampleListCard = ({ sample, index }: propsI) => {
           <Avatar src={"/favicon.ico"} size={20} />
           <p className="text-sm">{stroopsToXlm(sample?.price)} USDC</p>
         </div>
-        <Link to={`/sample/${sample?.id}`}>
+        <Link
+          to={`/sample/${sample?.id}`}
+          aria-label={`View ${sample?.title || "sample"} details`}
+        >
           <div className="md:h-[44px] h-[35px] md:w-[44px] w-[35px] rounded-full bg-primary-default flex items-center justify-center cursor-pointer">
             <TbPlayerPlayFilled size={20} />
           </div>

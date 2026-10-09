@@ -21,7 +21,7 @@ export const SampleCard = ({ sample }: propsI) => {
         <div className="relative h-[25rem] w-full z-[1]">
           <img
             src={sample?.cover_image || "/favicon.ico"}
-            alt=""
+            alt={`${sample?.title || "Sample"} cover artwork`}
             // fill
             className="w-full h-full object-cover rounded-xl"
           />
@@ -47,7 +47,10 @@ export const SampleCard = ({ sample }: propsI) => {
                 </div>
               </div>
 
-              <Link to={`/sample/${sample?.id}`}>
+              <Link
+                to={`/sample/${sample?.id}`}
+                aria-label={`View ${sample?.title || "sample"} details`}
+              >
                 <div>
                   <Avatar
                     size={38}
