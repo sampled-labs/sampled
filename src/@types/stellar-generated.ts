@@ -228,6 +228,19 @@ export interface Client {
   ) => Promise<AssembledTransaction<Result<string>>>;
 
   /**
+   * Construct and simulate a get_purchase transaction.
+   * Returns the persisted receipt including price_paid and timestamp.
+   */
+  get_purchase: (
+    { buyer, sample_id }: { buyer: string; sample_id: u32 },
+    options?: {
+      fee?: number;
+      timeoutInSeconds?: number;
+      simulate?: boolean;
+    },
+  ) => Promise<AssembledTransaction<Result<Purchase>>>;
+
+  /**
    * Construct and simulate a get_user_purchases transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   get_user_purchases: (
@@ -373,6 +386,7 @@ export class Client extends ContractClient {
         "AAAAAAAAABBHRVQgdXNlciBzYW1wbGVzAAAAEGdldF91c2VyX3NhbXBsZXMAAAABAAAAAAAAAAx1c2VyX2FkZHJlc3MAAAATAAAAAQAAA+oAAAfQAAAABlNhbXBsZQAA",
         "AAAAAAAAAAAAAAAPZ2V0X2FsbF9zYW1wbGVzAAAAAAAAAAABAAAD6gAAB9AAAAAGU2FtcGxlAAA=",
         "AAAAAAAAAAAAAAAPcHVyY2hhc2Vfc2FtcGxlAAAAAAIAAAAAAAAABWJ1eWVyAAAAAAAAEwAAAAAAAAAJc2FtcGxlX2lkAAAAAAAABAAAAAEAAAPpAAAAEAAAAAM=",
+        "AAAAAAAAABNHRVQgc3RvcmVkIHB1cmNoYXNlAAAAAAxnZXRfcHVyY2hhc2UAAAACAAAAAAAAAAVidXllcgAAAAAAABMAAAAAAAAACXNhbXBsZV9pZAAAAAAAAAQAAAABAAAD6QAAB9AAAAAIUHVyY2hhc2UAAAAD",
         "AAAAAAAAAAAAAAASZ2V0X3VzZXJfcHVyY2hhc2VzAAAAAAABAAAAAAAAAAVidXllcgAAAAAAABMAAAABAAAD6gAAB9AAAAAGU2FtcGxlAAA=",
         "AAAAAAAAAAAAAAANaGFzX3B1cmNoYXNlZAAAAAAAAAIAAAAAAAAABWJ1eWVyAAAAAAAAEwAAAAAAAAAJc2FtcGxlX2lkAAAAAAAABAAAAAEAAAAB",
         "AAAAAAAAAAAAAAARd2l0aGRyYXdfZWFybmluZ3MAAAAAAAABAAAAAAAAAAR1c2VyAAAAEwAAAAEAAAPpAAAACwAAAAM=",
