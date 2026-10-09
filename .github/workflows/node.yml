@@ -45,6 +45,10 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx prettier . --check
+      - name: Verify sitemap generation
+        run: |
+          node --test scripts/generate-sitemap.test.mjs
+          npm run generate:sitemap
       - name: Build clients before building the project
         run: STELLAR_SCAFFOLD_ENV=development stellar-scaffold build --build-clients
       - run: npm run install:contracts
