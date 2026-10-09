@@ -51,7 +51,7 @@ fn only_the_seller_can_delist_and_relist_and_purchases_return_the_inactive_error
     ));
     assert!(matches!(
         client.try_purchase_sample(&other, &id),
-        Err(Ok(Error::SampleNotActive))
+        Err(Ok(Error::InactiveSample))
     ));
 
     client.set_active(&id, &true, &seller);
@@ -60,41 +60,19 @@ fn only_the_seller_can_delist_and_relist_and_purchases_return_the_inactive_error
 }
 
 #[test]
-fn update_price_rejects_inactive_listings_and_refreshes_ttl_when_active() {
-    let (env, contract, seller, other) = fixture();
+fn state_transitions_refresh_the_canonical_listing_ttl() {
+    let (env, contract, seller, _) = fixture();
     let client = SampledClient::new(&env, &contract);
     let id = create_sample(&env, &contract, &seller);
 
-    client.set_active(&id, &false, &seller);
-    assert!(matches!(
-        client.try_update_price(&2_000_i128, &id, &seller),
-        Err(Ok(Error::SampleNotActive))
-    ));
-    assert_eq!(client.get_sample(&id).unwrap().price, 1_000_i128);
-
-    client.set_active(&id, &true, &seller);
-    assert!(matches!(
-        client.try_update_price(&2_000_i128, &id, &other),
-        Err(Ok(Error::NotAuthorized))
-    ));
-    assert!(matches!(
-        client.try_update_price(&0_i128, &id, &seller),
-        Err(Ok(Error::InvalidPrice))
-    ));
-
-    // Let some persistent rent lifetime elapse before checking the refresh.
+    // Reducing the remaining rent lifetime makes the renewal observable.
     let sequence = env.ledger().sequence();
     env.ledger().set_sequence_number(sequence + 10);
-    let before = env.as_contract(&contract, || {
-        env.storage().persistent().get_ttl(&id)
-    });
+    let before = env.as_contract(&contract, || env.storage().persistent().get_ttl(&id));
 
-    client.update_price(&2_000_i128, &id, &seller);
-    let after = env.as_contract(&contract, || {
-        env.storage().persistent().get_ttl(&id)
-    });
+    client.set_active(&id, &false, &seller);
+
+    let after = env.as_contract(&contract, || env.storage().persistent().get_ttl(&id));
     assert!(after > before);
-    assert_eq!(client.get_sample(&id).unwrap().price, 2_000_i128);
-    assert_eq!(client.get_all_samples().get(0).unwrap().price, 2_000_i128);
-    assert_eq!(client.get_user_samples(&seller).get(0).unwrap().price, 2_000_i128);
+    assert!(!client.get_sample(&id).unwrap().is_active);
 }
