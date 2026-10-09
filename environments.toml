@@ -9,9 +9,12 @@ name = "me" # Required. Keys for this account will be saved to `./.stellar/ident
 default = true # Optional. Whether to use this account as the `--source` for commands that need one.
 
 [development.contracts]
+# Only 'sampled' is a project contract. The commented names below are
+# inactive scaffold examples and are not deployed by this configuration.
+# The payment token value is the TESTNET native XLM contract only.
 # fungible_allowlist_example = { client = true, constructor_args = "--admin me --manager me --initial_supply 1000000000000000000000000" }
 # nft_enumerable_example = { client = true, constructor_args = "--owner me" }
-sampled = {client = true, constructor_args = "--platform_address me --platform_fee 10"} 
+sampled = {client = true, constructor_args = "--platform_address me --platform_fee 10 --payment_token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"} 
 
 # Rather than in one list, TOML allows specifying contracts in their own "sections"
 # [development.contracts.guess_the_number]
@@ -78,6 +81,7 @@ name = "testnet-user"
 default = true
 
 [staging.contracts]
+# All following C... IDs are inactive scaffold examples, not real deployments.
 # soroban-atomic-swap-contract = { id = "C123..." }
 # soroban-auth-contract = { id = "C234..." }
 # soroban-errors-contract = { id = "C345..." }
@@ -96,6 +100,7 @@ name = "official-team-account"
 default = true
 
 [production.contracts]
+# All following C... IDs are inactive scaffold examples, not real deployments.
 # soroban-atomic-swap-contract = { id = "C987..." }
 # soroban-auth-contract = { id = "C876..." }
 # soroban-errors-contract = { id = "C765..." }
