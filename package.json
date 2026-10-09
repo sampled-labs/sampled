@@ -63,7 +63,7 @@
     "concurrently": "^9.2.1",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-react-dom": "^2.0.3",
+    "eslint-plugin-react-dom": "^5.24.6",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
     "eslint-plugin-react-x": "^2.0.3",
