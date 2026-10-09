@@ -5,8 +5,7 @@ import { useWalletBalance } from "../../hooks/useWalletBalance";
 import { Sample } from "../../@types/stellar-generated";
 import {
   stroopsToXlm,
-  useGetUserPurchases,
-  // useHasPurchased,
+  useHasPurchased,
   usePurchaseSample,
 } from "../../hooks/useSampledContract";
 import { connectWallet } from "../../util/wallet";
@@ -18,20 +17,18 @@ import { Link } from "react-router-dom";
 
 export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
   const { updateBalance, usdc } = useWalletBalance();
-  // const { data: hasPurchased, refetch: refetchPurchaseStatus } =
-  //   useHasPurchased(sample?.id)
+  const {
+    data: hasPurchased = false,
+    isPending: isCheckingPurchase,
+    isError: hasPurchaseStatusError,
+    refetch: refetchPurchaseStatus,
+  } = useHasPurchased(sample.id);
   const { mutate: purchaseSample, isPending: isPurchasing } =
     usePurchaseSample();
   const { address } = useWallet();
   const isSeller = address === sample?.seller;
-  const { data: purchases, refetch: refetchUserPurchases } =
-    useGetUserPurchases();
-  const hasPurchased = Boolean(
-    purchases?.find(
-      (purchase) =>
-        purchase.id === sample.id && purchase.seller === sample.seller,
-    ),
-  );
+  const purchaseStatusUnknown =
+    Boolean(address) && (isCheckingPurchase || hasPurchaseStatusError);
 
   const handlePurchase = async () => {
     if (!address) {
@@ -59,8 +56,7 @@ export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
             </Link>
           ),
         });
-        // refetchPurchaseStatus()
-        refetchUserPurchases();
+        void refetchPurchaseStatus();
         updateBalance();
 
         // Optionally auto-download after purchase
@@ -102,13 +98,20 @@ export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
         )}
       </div>
 
+      {hasPurchaseStatusError && address && (
+        <p role="alert" className="text-sm text-red-500">
+          Unable to verify purchase status. Please try again.
+        </p>
+      )}
+
       {!hasPurchased && !isSeller ? (
         <div className="space-y-2">
           <Button
             className={` w-full !h-[45px]`}
             type="primary"
             size="large"
-            loading={isPurchasing}
+            loading={isPurchasing || (Boolean(address) && isCheckingPurchase)}
+            disabled={purchaseStatusUnknown}
             onClick={handlePurchase}
           >
             Buy sample
