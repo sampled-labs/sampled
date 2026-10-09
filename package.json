@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "prepare": "husky",
     "deploy-contract": "stellar contract deploy   --wasm target/wasm32v1-none/release/sampled.wasm   --source deployer   --network testnet -- --platform-fee 10 --platform-address 'GARU7AD26CKV75GSPXC5XD7ADEW27HMRMDZAJOC77D6LLRTF54BC5KNK'",
     "build:seo": "tsc -b && node scripts/generate-sitemap.js && vite build",
