@@ -106,7 +106,7 @@ impl Sampled {
             cover_image: cover_image.clone(),
         };
 
-        storage.set(&total_samples, &sample);
+        storage.set(&StorageKey::Sample(total_samples), &sample);
 
         // Add to all samples
         let mut all_samples: Vec<Sample> = storage.get(&ALL_SAMPLES_KEY).unwrap_or(vec![&env]);
@@ -137,7 +137,7 @@ impl Sampled {
     /// GET a sample
     pub fn get_sample(env: Env, sample_id: u32) -> Result<Sample, Error> {
         let storage = env.storage().persistent();
-        let sample_opt: Option<Sample> = storage.get(&sample_id);
+        let sample_opt: Option<Sample> = storage.get(&StorageKey::Sample(sample_id));
         match sample_opt {
             Some(value) => Ok(value),
             None => Err(Error::SampleNotFound),
@@ -153,7 +153,7 @@ impl Sampled {
     ) -> Result<(), Error> {
         seller.require_auth();
         let storage = env.storage().persistent();
-        let sample: Option<Sample> = storage.get(&sample_id);
+        let sample: Option<Sample> = storage.get(&StorageKey::Sample(sample_id));
         match sample {
             Some(mut value) => {
                 if seller != value.seller {
@@ -164,7 +164,7 @@ impl Sampled {
                     return Err(Error::InvalidPrice);
                 }
                 value.price = new_price;
-                storage.set(&sample_id, &value);
+                storage.set(&StorageKey::Sample(sample_id), &value);
             }
             None => {
                 panic!("Sample not found")
@@ -198,7 +198,7 @@ impl Sampled {
         let mut sample: Sample = env
             .storage()
             .persistent()
-            .get(&sample_id)
+            .get(&StorageKey::Sample(sample_id))
             .ok_or(Error::SampleNotFound)?;
 
         // Check if sample is active
@@ -282,7 +282,7 @@ impl Sampled {
 
         // Update sample sales count
         sample.total_sales += 1;
-        env.storage().persistent().set(&sample_id, &sample);
+        env.storage().persistent().set(&StorageKey::Sample(sample_id), &sample);
 
         // Update total volume
         let mut total_volume: i128 = env.storage().instance().get(&TOTAL_VOLUME_KEY).unwrap_or(0);
