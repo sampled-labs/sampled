@@ -4,6 +4,8 @@ import React, {
   ReactNode,
   useMemo,
   useCallback,
+  useEffect,
+  useRef,
 } from "react";
 import { Notification as StellarNotification } from "@stellar/design-system";
 import "./NotificationProvider.css"; // Import CSS for sliding effect
@@ -33,6 +35,15 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const timeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
+  useEffect(() => {
+    const timeouts = timeoutsRef.current;
+    return () => {
+      timeouts.forEach(clearTimeout);
+      timeouts.clear();
+    };
+  }, []);
 
   const addNotification = useCallback(
     (message: string, type: NotificationType) => {
@@ -44,13 +55,17 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
       };
       setNotifications((prev) => [...prev, newNotification]);
 
-      setTimeout(() => {
+      const exitTimeout = setTimeout(() => {
+        timeoutsRef.current.delete(exitTimeout);
         setNotifications(markRead(newNotification.id));
       }, 2500); // Start transition out after 2.5 seconds
+      timeoutsRef.current.add(exitTimeout);
 
-      setTimeout(() => {
+      const removeTimeout = setTimeout(() => {
+        timeoutsRef.current.delete(removeTimeout);
         setNotifications(filterOut(newNotification.id));
       }, 5000); // Remove after 5 seconds
+      timeoutsRef.current.add(removeTimeout);
     },
     [],
   );
@@ -83,7 +98,7 @@ function markRead(
   return (prev) =>
     prev.map((notification) =>
       notification.id === id
-        ? { ...notification, isVisible: true }
+        ? { ...notification, isVisible: false }
         : notification,
     );
 }
