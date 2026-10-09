@@ -9,6 +9,7 @@ mod storage_key;
 
 #[cfg(test)]
 mod tests;
+mod test;
 
 use error::Error;
 // use storage_key::StorageKey;
@@ -110,6 +111,8 @@ impl Sampled {
         };
 
         storage.set(&StorageKey::Sample(total_samples), &sample);
+        storage.set(&total_samples, &sample);
+        storage.extend_ttl(&total_samples, env.storage().max_ttl(), env.storage().max_ttl());
 
         // Add to all samples
         let mut all_samples: Vec<Sample> = storage.get(&ALL_SAMPLES_KEY).unwrap_or(vec![&env]);
@@ -177,6 +180,31 @@ impl Sampled {
         Ok(())
     }
 
+    /// Change a listing's active state. Only its original seller may delist or relist.
+    pub fn set_active(
+        env: Env,
+        sample_id: u32,
+        is_active: bool,
+        seller: Address,
+    ) -> Result<(), Error> {
+        seller.require_auth();
+        let storage = env.storage().persistent();
+        let mut sample: Sample = storage.get(&sample_id).ok_or(Error::SampleNotFound)?;
+        if sample.seller != seller {
+            return Err(Error::NotAuthorized);
+        }
+
+        sample.is_active = is_active;
+        storage.set(&sample_id, &sample);
+        storage.extend_ttl(
+            &sample_id,
+            env.storage().max_ttl(),
+            env.storage().max_ttl(),
+        );
+        sync_sample_views(&env, &sample);
+        Ok(())
+    }
+
     /// GET user samples
     pub fn get_user_samples(env: Env, user_address: Address) -> Vec<Sample> {
         env.storage()
@@ -206,7 +234,7 @@ impl Sampled {
 
         // Check if sample is active
         if !sample.is_active {
-            return Err(Error::SampleNotFound);
+            return Err(Error::InactiveSample);
         }
 
         // Check if already purchased
@@ -383,6 +411,41 @@ impl Sampled {
             .get(&StorageKey::Earnings(user))
             .unwrap_or(0)
     }
+}
+
+// Keep public listing and seller-list views in sync with the canonical record.
+// Both caches contain cloned Sample values, rather than referencing the record.
+fn sync_sample_views(env: &Env, sample: &Sample) {
+    let storage = env.storage().persistent();
+    let global: Option<Vec<Sample>> = storage.get(&ALL_SAMPLES_KEY);
+    if let Some(items) = global {
+        let mut updated = Vec::new(env);
+        for item in items.iter() {
+            updated.push_back(if item.id == sample.id { sample.clone() } else { item });
+        }
+        storage.set(&ALL_SAMPLES_KEY, &updated);
+        storage.extend_ttl(&ALL_SAMPLES_KEY, env.storage().max_ttl(), env.storage().max_ttl());
+    }
+
+    let seller_list: Option<Vec<Sample>> = storage.get(&sample.seller);
+    if let Some(items) = seller_list {
+        let mut updated = Vec::new(env);
+        for item in items.iter() {
+            updated.push_back(if item.id == sample.id { sample.clone() } else { item });
+        }
+        storage.set(&sample.seller, &updated);
+        storage.extend_ttl(&sample.seller, env.storage().max_ttl(), env.storage().max_ttl());
+    }
+}
+
+// Helper function to get XLM token address
+fn _get_xlm_token_address(env: &Env) -> Address {
+    // On testnet, use the native token address
+    // This is a placeholder - replace with actual XLM token address for your network
+    Address::from_string(&String::from_str(
+        env,
+        "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    ))
 }
 
 fn get_payment_token(env: &Env) -> Address {
