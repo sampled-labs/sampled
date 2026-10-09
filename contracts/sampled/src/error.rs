@@ -9,4 +9,5 @@ pub enum Error {
     // Match the separate #61 contribution; #55 reserves code 7 for SelfPurchase.
     // Preserve SelfPurchase = 7 reserved by open issue #55 carrier.
     InactiveSample = 8,
+    SelfPurchase = 7,
 }

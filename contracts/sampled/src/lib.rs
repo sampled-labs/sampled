@@ -56,12 +56,16 @@ pub struct Sampled {}
 
 #[contractimpl]
 impl Sampled {
+    /// `platform_fee` is an integer percentage in the inclusive range 0..=100.
     pub fn __constructor(
         env: Env,
         platform_fee: u32,
         platform_address: Address,
         payment_token: Address,
     ) {
+        if platform_fee > 100 {
+            panic!("Platform fee must be between 0 and 100 percent");
+        }
         let storage = env.storage().instance();
         if storage.has(&PLATFORM_ADDRESS_KEY) {
             panic!("Contract already exists");
@@ -266,6 +270,11 @@ impl Sampled {
         // Check if sample is active
         if !sample.is_active {
             return Err(Error::InactiveSample);
+        }
+
+        // The seller must not buy their own listing or accrue an artificial sale.
+        if buyer == sample.seller {
+            return Err(Error::SelfPurchase);
         }
 
         // Check if already purchased
@@ -522,6 +531,8 @@ fn get_payment_token(env: &Env) -> Address {
 // Contract receipt roundtrip: price_paid and timestamp remain readable.
 #[cfg(test)]
 mod purchase_receipt_tests {
+#[cfg(test)]
+mod purchase_guard_tests {
     use super::*;
     use soroban_sdk::testutils::Address as _;
 
@@ -558,4 +569,40 @@ fn refresh_persistent_ttl<K: IntoVal<Env, Val>>(env: &Env, key: &K) {
     env.storage()
         .persistent()
         .extend_ttl(key, max_ttl, max_ttl);
+    #[should_panic]
+    fn constructor_rejects_fee_above_one_hundred() {
+        let env = Env::default();
+        env.register(
+            Sampled,
+            (101u32, Address::generate(&env), Address::generate(&env)),
+        );
+    }
+
+    #[test]
+    fn fee_boundary_accepts_one_hundred_and_self_purchase_does_not_mutate_state() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let seller = Address::generate(&env);
+        let platform = Address::generate(&env);
+        let token = Address::generate(&env);
+        let id = env.register(Sampled, (100u32, platform, token));
+        let client = SampledClient::new(&env, &id);
+        let sample_id = client.upload_sample(
+            &seller,
+            &1_000i128,
+            &String::from_str(&env, "ipfs://audio"),
+            &String::from_str(&env, "Audio sample"),
+            &120u32,
+            &String::from_str(&env, "other"),
+            &String::from_str(&env, "ipfs://artwork"),
+        );
+
+        assert!(matches!(
+            client.try_purchase_sample(&seller, &sample_id),
+            Err(Ok(Error::SelfPurchase))
+        ));
+        assert!(!client.has_purchased(&seller, &sample_id));
+        assert_eq!(client.get_earnings(&seller), 0);
+        assert_eq!(client.get_sample(&sample_id).total_sales, 0);
+    }
 }
