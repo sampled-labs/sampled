@@ -18,6 +18,8 @@ doctest = false
 [dependencies]
 soroban-sdk = "25.3.1"
 stellar-registry = "0.0.4"
+soroban-sdk = "23.0.3"
+stellar-registry = "0.0.11"
 
 [dev-dependencies]
 stellar-xdr = { version = "23.0.0", features = ["curr", "serde"] }
