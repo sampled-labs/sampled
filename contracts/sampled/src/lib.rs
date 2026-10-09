@@ -283,6 +283,14 @@ impl Sampled {
         Ok(sample.ipfs_link)
     }
 
+    /// GET the immutable purchase receipt for a buyer and sample.
+    pub fn get_purchase(env: Env, buyer: Address, sample_id: u32) -> Result<Purchase, Error> {
+        env.storage()
+            .persistent()
+            .get(&StorageKey::Purchase(buyer, sample_id))
+            .ok_or(Error::SampleNotFound)
+    }
+
     // Get user's purchased samples
     pub fn get_user_purchases(env: Env, buyer: Address) -> Vec<Sample> {
         env.storage()
@@ -367,4 +375,40 @@ fn get_payment_token(env: &Env) -> Address {
         .instance()
         .get(&PAYMENT_TOKEN_KEY)
         .expect("Payment token not set")
+}
+
+
+// Contract receipt roundtrip: price_paid and timestamp remain readable.
+#[cfg(test)]
+mod purchase_receipt_tests {
+    use super::*;
+    use soroban_sdk::testutils::Address as _;
+
+    #[test]
+    fn stored_purchase_preserves_price_paid_and_timestamp() {
+        let env = Env::default();
+        let platform = Address::generate(&env);
+        let token = Address::generate(&env);
+        let buyer = Address::generate(&env);
+        let contract_id = env.register(Sampled, (10u32, platform, token));
+        let sample_id = 7u32;
+        let purchase = Purchase {
+            buyer: buyer.clone(),
+            sample_id,
+            price_paid: 125_000_i128,
+            timestamp: 1_731_000_000u64,
+        };
+
+        env.as_contract(&contract_id, || {
+            env.storage()
+                .persistent()
+                .set(&StorageKey::Purchase(buyer.clone(), sample_id), &purchase);
+
+            let stored = Sampled::get_purchase(env.clone(), buyer.clone(), sample_id).unwrap();
+            assert_eq!(stored.buyer, buyer);
+            assert_eq!(stored.sample_id, sample_id);
+            assert_eq!(stored.price_paid, 125_000_i128);
+            assert_eq!(stored.timestamp, 1_731_000_000u64);
+        });
+    }
 }
