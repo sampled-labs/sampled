@@ -22,6 +22,27 @@ const PLATFORM_ADDRESS_KEY: Symbol = symbol_short!("P_ADDRESS");
 const TOTAL_VOLUME_KEY: Symbol = symbol_short!("T_VOLUME");
 const PAYMENT_TOKEN_KEY: Symbol = symbol_short!("PAY_TOKEN");
 
+/// Split positive token base units: floor the platform's percentage, credit all remaining units to the seller.
+fn split_revenue(price: i128, platform_fee: u32) -> (i128, i128) {
+    let platform_amount = (price * i128::from(platform_fee)) / 100;
+    (platform_amount, price - platform_amount)
+}
+
+#[cfg(test)]
+mod revenue_split_tests {
+    use super::split_revenue;
+
+    #[test]
+    fn the_platform_share_rounds_down_and_totals_conserve_units() {
+        for price in [1_i128, 9, 11, 101, 10_000_001, 19_999_999] {
+            let (platform, seller) = split_revenue(price, 10);
+            assert_eq!(platform + seller, price);
+            assert_eq!(platform, price / 10);
+        }
+        assert_eq!(split_revenue(10_000_001, 10), (1_000_000, 9_000_001));
+    }
+}
+
 #[contract]
 pub struct Sampled {}
 
@@ -201,9 +222,8 @@ impl Sampled {
             .get(&PLATFORM_FEE_KEY)
             .unwrap_or(10);
 
-        // Calculate fees
-        let platform_amount = (sample.price * platform_fee as i128) / 100;
-        let seller_amount = sample.price - platform_amount;
+        // Split smallest token units, rounding down the platform fee.
+        let (platform_amount, seller_amount) = split_revenue(sample.price, platform_fee);
 
         // Get platform address
         let platform_address: Address =
