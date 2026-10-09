@@ -50,10 +50,8 @@ export interface Purchase {
 export const Errors = {
   1: { message: "NotAuthorized" },
   2: { message: "SampleNotFound" },
-  3: { message: "InsufficientPayment" },
   4: { message: "AlreadyPurchased" },
   5: { message: "InvalidPrice" },
-  6: { message: "WithdrawFailed" },
 };
 
 export type StorageKey =
