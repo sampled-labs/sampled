@@ -1,17 +1,21 @@
 #![no_std]
 use soroban_sdk::{
     contract, contractimpl, log, symbol_short, token, vec, Address, Env, IntoVal, String, Symbol, Val, Vec,
+    contract, contractimpl, log, symbol_short, token, vec, Address, Env, Event, String, Symbol, Vec,
 };
 
 mod data_structures;
 mod error;
+mod events;
 mod storage_key;
 
 #[cfg(test)]
 mod tests;
 mod test;
+mod events_test;
 
 use error::Error;
+use events::{EarningsWithdrawn, SampleListed, SamplePurchased, SampleRepriced};
 // use storage_key::StorageKey;
 
 use crate::{
@@ -137,6 +141,14 @@ impl Sampled {
             env.storage().max_ttl(),
         );
 
+        // Emit only after the listing has been recorded successfully.
+        SampleListed {
+            sample_id: total_samples - 1,
+            seller,
+            price,
+        }
+        .publish(&env);
+
         total_samples - 1
     }
 
@@ -184,6 +196,12 @@ impl Sampled {
                     env.storage().max_ttl(),
                     env.storage().max_ttl(),
                 );
+                SampleRepriced {
+                    sample_id,
+                    seller: seller.clone(),
+                    new_price,
+                }
+                .publish(&env);
             }
             None => {
                 panic!("Sample not found")
@@ -342,6 +360,17 @@ impl Sampled {
             .instance()
             .set(&TOTAL_VOLUME_KEY, &total_volume);
 
+        // Publish after settlement and all state updates. Failed token transfers
+        // abort the transaction, so no successful purchase event is committed.
+        SamplePurchased {
+            sample_id,
+            buyer: buyer.clone(),
+            price_paid: sample.price,
+            platform_amount,
+            seller_amount,
+        }
+        .publish(&env);
+
         log!(
             &env,
             "Sample {} purchased by {} for {} stroops",
@@ -411,6 +440,12 @@ impl Sampled {
         // cleared balance atomically along with all other contract changes.
         let xlm_token = token::Client::new(&env, &get_payment_token(&env));
         xlm_token.transfer(&env.current_contract_address(), &user, &earnings);
+
+        EarningsWithdrawn {
+            user: user.clone(),
+            amount: earnings,
+        }
+        .publish(&env);
 
         log!(&env, "User {} withdrew {} stroops", user, earnings);
 
