@@ -7,6 +7,9 @@ mod data_structures;
 mod error;
 mod storage_key;
 
+#[cfg(test)]
+mod test;
+
 use error::Error;
 // use storage_key::StorageKey;
 
@@ -86,6 +89,7 @@ impl Sampled {
         };
 
         storage.set(&total_samples, &sample);
+        storage.extend_ttl(&total_samples, env.storage().max_ttl(), env.storage().max_ttl());
 
         // Add to all samples
         let mut all_samples: Vec<Sample> = storage.get(&ALL_SAMPLES_KEY).unwrap_or(vec![&env]);
@@ -139,17 +143,51 @@ impl Sampled {
                     return Err(Error::NotAuthorized);
                 }
 
+                if !value.is_active {
+                    return Err(Error::SampleNotActive);
+                }
                 if new_price <= 0 {
                     return Err(Error::InvalidPrice);
                 }
                 value.price = new_price;
                 storage.set(&sample_id, &value);
+                storage.extend_ttl(
+                    &sample_id,
+                    env.storage().max_ttl(),
+                    env.storage().max_ttl(),
+                );
+                sync_sample_views(&env, &value);
             }
             None => {
                 panic!("Sample not found")
             }
         };
 
+        Ok(())
+    }
+
+    /// Change a listing's active state. Only its original seller may delist or relist.
+    pub fn set_active(
+        env: Env,
+        sample_id: u32,
+        is_active: bool,
+        seller: Address,
+    ) -> Result<(), Error> {
+        seller.require_auth();
+        let storage = env.storage().persistent();
+        let mut sample: Sample = storage.get(&sample_id).ok_or(Error::SampleNotFound)?;
+        if sample.seller != seller {
+            return Err(Error::NotAuthorized);
+        }
+
+        sample.is_active = is_active;
+        storage.set(&sample_id, &sample);
+        storage.extend_ttl(
+            &sample_id,
+            env.storage().max_ttl(),
+            env.storage().max_ttl(),
+        );
+        sync_sample_views(&env, &sample);
         Ok(())
     }
 
@@ -182,7 +220,7 @@ impl Sampled {
 
         // Check if sample is active
         if !sample.is_active {
-            return Err(Error::SampleNotFound);
+            return Err(Error::SampleNotActive);
         }
 
         // Check if already purchased
@@ -349,6 +387,31 @@ impl Sampled {
             .persistent()
             .get(&StorageKey::Earnings(user))
             .unwrap_or(0)
+    }
+}
+
+// Keep public listing and seller-list views in sync with the canonical record.
+// Both caches contain cloned Sample values, rather than referencing the record.
+fn sync_sample_views(env: &Env, sample: &Sample) {
+    let storage = env.storage().persistent();
+    let global: Option<Vec<Sample>> = storage.get(&ALL_SAMPLES_KEY);
+    if let Some(items) = global {
+        let mut updated = Vec::new(env);
+        for item in items.iter() {
+            updated.push_back(if item.id == sample.id { sample.clone() } else { item });
+        }
+        storage.set(&ALL_SAMPLES_KEY, &updated);
+        storage.extend_ttl(&ALL_SAMPLES_KEY, env.storage().max_ttl(), env.storage().max_ttl());
+    }
+
+    let seller_list: Option<Vec<Sample>> = storage.get(&sample.seller);
+    if let Some(items) = seller_list {
+        let mut updated = Vec::new(env);
+        for item in items.iter() {
+            updated.push_back(if item.id == sample.id { sample.clone() } else { item });
+        }
+        storage.set(&sample.seller, &updated);
+        storage.extend_ttl(&sample.seller, env.storage().max_ttl(), env.storage().max_ttl());
     }
 }
 
