@@ -7,6 +7,9 @@ mod data_structures;
 mod error;
 mod storage_key;
 
+#[cfg(test)]
+mod tests;
+
 use error::Error;
 // use storage_key::StorageKey;
 
@@ -342,14 +345,16 @@ impl Sampled {
             return Ok(0);
         }
 
-        // Transfer earnings to user
-        let xlm_token = token::Client::new(&env, &get_payment_token(&env));
-        xlm_token.transfer(&env.current_contract_address(), &user, &earnings);
-
-        // Reset user's earnings
+        // Effects before interactions: the payment token is constructor-supplied
+        // contract code. Even if it calls back, there is no withdrawable balance.
         env.storage()
             .persistent()
             .set(&StorageKey::Earnings(user.clone()), &0i128);
+
+        // A failed external transfer aborts the invocation, rolling back the
+        // cleared balance atomically along with all other contract changes.
+        let xlm_token = token::Client::new(&env, &get_payment_token(&env));
+        xlm_token.transfer(&env.current_contract_address(), &user, &earnings);
 
         log!(&env, "User {} withdrew {} stroops", user, earnings);
 
