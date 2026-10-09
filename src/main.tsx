@@ -1,3 +1,5 @@
+// Apply antd v5's React 19 compatibility patch before loading any antd consumers.
+import "@ant-design/v5-patch-for-react-19";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
