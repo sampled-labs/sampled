@@ -319,18 +319,20 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
   const { address } = useWallet();
 
   const handleUpload = async (): Promise<void> => {
-    if (!address) {
-      toast.error("Error", {
-        className: "!bg-red-500 *:!text-white !border-0",
-        description: <p className="text-white">Wallet not connected</p>,
-        duration: 5000,
-        icon: <IoCloseCircleSharp size={20} />,
-      });
-      throw new Error("Wallet not connected");
-    }
     if (!validateForm() || !file) return;
+    setUploadProgress({ status: "uploading", percentage: 0 });
 
     try {
+      if (!address) {
+        toast.error("Error", {
+          className: "!bg-red-500 *:!text-white !border-0",
+          description: <p className="text-white">Wallet not connected</p>,
+          duration: 5000,
+          icon: <IoCloseCircleSharp size={20} />,
+        });
+        throw new Error("Wallet not connected");
+      }
+
       const audioLink = await uploadFile(file);
 
       // Upload cover image if provided
@@ -339,6 +341,7 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
         coverImageLink = await uploadFile(formData.coverImage);
       }
 
+      setUploadProgress({ status: "processing", percentage: 100 });
       const response = await uploadSample({
         price: parseTokenUnits(formData.price),
         ipfs_link: audioLink ?? "",
@@ -365,12 +368,14 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
         ),
       });
 
-      // // Reset form after success
-      setTimeout(() => {
-        resetForm();
-      }, 3000);
+      setUploadProgress({ status: "complete", percentage: 100 });
     } catch (error) {
       console.error("Upload error:", error);
+      setUploadProgress({
+        status: "error",
+        percentage: 0,
+        message: error instanceof Error ? error.message : "Upload failed. Please try again.",
+      });
     }
   };
 
@@ -392,6 +397,9 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
               <Check className="success-icon" size={48} />
               <h2>Successfully Uploaded!</h2>
               <p>Your sample is now live on the marketplace</p>
+              <button className="btn btn-primary" onClick={resetForm}>
+                Upload Another Sample
+              </button>
             </div>
           ) : uploadProgress.status === "error" ? (
             <div className="error-message">
