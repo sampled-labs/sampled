@@ -100,7 +100,7 @@ export const Loader = () => {
       tl.kill();
       if (timelineRef.current === tl) timelineRef.current = null;
     };
-  }, { dependencies: [showLoader], revertOnUpdate: true });
+  }, []);
 
   if (!showLoader) return null;
 
@@ -119,7 +119,6 @@ export const Loader = () => {
               } else {
                 timelineRef.current?.play();
               }
-              // progress >= 100 ? tl.reverse() : tl.play()
             }}
           >
             {progress.toFixed(0)}%
