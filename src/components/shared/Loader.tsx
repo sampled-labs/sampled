@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ScrambleTextPlugin from "gsap/ScrambleTextPlugin";
@@ -7,10 +7,26 @@ import TextPlugin from "gsap/TextPlugin";
 
 gsap.registerPlugin(ScrambleTextPlugin, SplitText, TextPlugin);
 
+// Completed first-load animations must not replay when routing remounts Loader.
+let initialLoadComplete = false;
+
 export const Loader = () => {
-  const tl = gsap.timeline({ paused: false });
+  const [showLoader, setShowLoader] = useState(() => !initialLoadComplete);
   const [progress, setProgress] = useState(0);
+  const timelineRef = useRef<gsap.core.Timeline | null>(null);
+
   useGSAP(() => {
+    if (!showLoader) return;
+
+    // useGSAP owns this instance and reverts it on cleanup.
+    const tl = gsap.timeline({
+      paused: true,
+      onComplete: () => {
+        initialLoadComplete = true;
+        setShowLoader(false);
+      },
+    });
+    timelineRef.current = tl;
     tl.to([".hero-video-text"], {
       zIndex: 55,
       duration: 0,
@@ -78,7 +94,16 @@ export const Loader = () => {
         { y: 0, opacity: 1 },
         "-=0.95",
       );
-  });
+
+    tl.play();
+    return () => {
+      tl.kill();
+      if (timelineRef.current === tl) timelineRef.current = null;
+    };
+  }, []);
+
+  if (!showLoader) return null;
+
   return (
     <>
       <div className="loader-up-1 bg-primary fixed bottom-0 left-0 w-screen h-[65vh] z-[50] cursor-pointer"></div>
@@ -90,11 +115,10 @@ export const Loader = () => {
           <h2
             onClick={() => {
               if (progress >= 100) {
-                tl.reverse();
+                timelineRef.current?.reverse();
               } else {
-                tl.play();
+                timelineRef.current?.play();
               }
-              // progress >= 100 ? tl.reverse() : tl.play()
             }}
           >
             {progress.toFixed(0)}%
