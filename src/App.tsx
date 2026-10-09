@@ -1,3 +1,4 @@
+import NotFound from "./pages/NotFound.tsx";
 import { Button, Icon, Layout } from "@stellar/design-system";
 import "./App.module.css";
 import ConnectAccount from "./components/ConnectAccount.tsx";
@@ -79,6 +80,7 @@ function App() {
         <Route path="/debug" element={<Debugger />} />
         <Route path="/debug/:contractName" element={<Debugger />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
