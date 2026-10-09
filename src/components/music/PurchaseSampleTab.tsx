@@ -11,6 +11,7 @@ import {
 } from "../../hooks/useSampledContract";
 import { connectWallet } from "../../util/wallet";
 import { downloadAudio } from "../../util/download-audio";
+import { hasPurchasedSample } from "../../util/hasPurchasedSample";
 import { useWallet } from "../../hooks/useWallet";
 import { toast } from "sonner";
 import { BsCheckCircleFill } from "react-icons/bs";
@@ -26,12 +27,7 @@ export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
   const isSeller = address === sample?.seller;
   const { data: purchases, refetch: refetchUserPurchases } =
     useGetUserPurchases();
-  const hasPurchased = Boolean(
-    purchases?.find(
-      (purchase) =>
-        purchase.id === sample.id && purchase.seller === sample.seller,
-    ),
-  );
+  const hasPurchased = hasPurchasedSample(purchases, sample);
 
   const handlePurchase = async () => {
     if (!address) {
