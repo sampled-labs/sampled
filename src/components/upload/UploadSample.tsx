@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { parseTokenUnits, splitRevenueUnits, formatTokenUnits } from "../../util/revenue-split";
 
 // Type definitions
 interface SampleFormData {
@@ -232,8 +233,10 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
       newErrors.title = "Title is required";
     }
 
-    if (!formData.price || parseFloat(formData.price) <= 0) {
-      newErrors.price = "Price must be greater than 0";
+    try {
+      parseTokenUnits(formData.price);
+    } catch {
+      newErrors.price = "Enter a positive price with up to 7 decimal places";
     }
 
     if (
@@ -285,9 +288,13 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
 
   const calculateEarnings = (): string => {
     if (!formData.price) return "0";
-    const price = parseFloat(formData.price);
-    const earnings = price * (1 - platformFeePercentage / 100);
-    return earnings.toFixed(2);
+    try {
+      const priceUnits = parseTokenUnits(formData.price);
+      const { seller } = splitRevenueUnits(priceUnits, platformFeePercentage);
+      return formatTokenUnits(seller);
+    } catch {
+      return "0";
+    }
   };
 
   // Form input handlers
@@ -333,7 +340,7 @@ const UploadUI: React.FC<UploadUIProps> = ({ platformFeePercentage = 10 }) => {
       }
 
       const response = await uploadSample({
-        price: BigInt(Number(formData.price) * 10_000_000),
+        price: parseTokenUnits(formData.price),
         ipfs_link: audioLink ?? "",
         bpm: Number(formData.bpm),
         title: formData.title,

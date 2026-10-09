@@ -17,6 +17,8 @@ Sampled leverages Stellar's speed and low costs to create a peer-to-peer sample 
 ✅ **Commercial Licensing**: Automatic license generation with each purchase  
 ✅ **Freighter Wallet Integration**: Seamless Web3 experience using Stellar Wallet Kit
 
+**Revenue rounding:** The platform percentage is applied to integer smallest token units and **rounded down**: `platform_units = floor(price_units × platform_fee_percent / 100)`. The seller receives **all remaining units** (`seller_units = price_units − platform_units`), so no unit disappears. For example, at a 10% platform fee on **1.0000001 USDC** (10,000,001 seven-decimal units), the platform receives **0.1 USDC** and the seller receives **0.9000001 USDC**. The upload preview uses the same integer-unit math; displayed figures are nominal and do not promise settlement.
+
 ### Technical Implementation:
 
 - **Smart Contract**: Rust-based Soroban contract handling listings, purchases, and withdrawals
