@@ -1,6 +1,6 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, log, symbol_short, token, vec, Address, Env, String, Symbol, Vec,
+    contract, contractimpl, log, symbol_short, token, vec, Address, Env, IntoVal, String, Symbol, Val, Vec,
 };
 
 mod data_structures;
@@ -278,27 +278,30 @@ impl Sampled {
         xlm_token.transfer(&buyer, &env.current_contract_address(), &sample.price);
 
         // Update seller earnings
+        let seller_earnings_key = StorageKey::Earnings(sample.seller.clone());
         let mut seller_earnings: i128 = env
             .storage()
             .persistent()
-            .get(&StorageKey::Earnings(sample.seller.clone()))
+            .get(&seller_earnings_key)
             .unwrap_or(0);
         seller_earnings += seller_amount;
-        env.storage().persistent().set(
-            &StorageKey::Earnings(sample.seller.clone()),
-            &seller_earnings,
-        );
+        env.storage()
+            .persistent()
+            .set(&seller_earnings_key, &seller_earnings);
+        refresh_persistent_ttl(&env, &seller_earnings_key);
 
         // Update platform earnings
+        let platform_earnings_key = StorageKey::Earnings(platform_address.clone());
         let mut platform_earnings: i128 = env
             .storage()
             .persistent()
-            .get(&StorageKey::Earnings(platform_address.clone()))
+            .get(&platform_earnings_key)
             .unwrap_or(0);
         platform_earnings += platform_amount;
         env.storage()
             .persistent()
-            .set(&StorageKey::Earnings(platform_address), &platform_earnings);
+            .set(&platform_earnings_key, &platform_earnings);
+        refresh_persistent_ttl(&env, &platform_earnings_key);
 
         // Create purchase record
         let purchase = Purchase {
@@ -309,24 +312,28 @@ impl Sampled {
         };
 
         // Store purchase
-        env.storage()
-            .persistent()
-            .set(&StorageKey::Purchase(buyer.clone(), sample_id), &purchase);
+        let purchase_key = StorageKey::Purchase(buyer.clone(), sample_id);
+        env.storage().persistent().set(&purchase_key, &purchase);
+        refresh_persistent_ttl(&env, &purchase_key);
 
         // Add to buyer's purchases
+        let user_purchases_key = StorageKey::UserPurchases(buyer.clone());
         let mut user_purchases: Vec<Sample> = env
             .storage()
             .persistent()
-            .get(&StorageKey::UserPurchases(buyer.clone()))
+            .get(&user_purchases_key)
             .unwrap_or(vec![&env]);
         user_purchases.push_back(sample.clone());
         env.storage()
             .persistent()
-            .set(&StorageKey::UserPurchases(buyer.clone()), &user_purchases);
+            .set(&user_purchases_key, &user_purchases);
+        refresh_persistent_ttl(&env, &user_purchases_key);
 
         // Update sample sales count
         sample.total_sales += 1;
         env.storage().persistent().set(&StorageKey::Sample(sample_id), &sample);
+        env.storage().persistent().set(&sample_id, &sample);
+        refresh_persistent_ttl(&env, &sample_id);
 
         // Update total volume
         let mut total_volume: i128 = env.storage().instance().get(&TOTAL_VOLUME_KEY).unwrap_or(0);
@@ -391,6 +398,14 @@ impl Sampled {
         env.storage()
             .persistent()
             .set(&StorageKey::Earnings(user.clone()), &0i128);
+        // Transfer earnings to user
+        let xlm_token = token::Client::new(&env, &get_payment_token(&env));
+        xlm_token.transfer(&env.current_contract_address(), &user, &earnings);
+
+        // Reset user's earnings
+        let earnings_key = StorageKey::Earnings(user.clone());
+        env.storage().persistent().set(&earnings_key, &0i128);
+        refresh_persistent_ttl(&env, &earnings_key);
 
         // A failed external transfer aborts the invocation, rolling back the
         // cleared balance atomically along with all other contract changes.
@@ -502,4 +517,10 @@ mod purchase_receipt_tests {
             assert_eq!(stored.timestamp, 1_731_000_000u64);
         });
     }
+// Keep purchase records and unclaimed balances alive for the same duration as listings.
+fn refresh_persistent_ttl<K: IntoVal<Env, Val>>(env: &Env, key: &K) {
+    let max_ttl = env.storage().max_ttl();
+    env.storage()
+        .persistent()
+        .extend_ttl(key, max_ttl, max_ttl);
 }
