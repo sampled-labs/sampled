@@ -45,19 +45,21 @@ export const useUploadSample = () => {
       if (!address) {
         throw new Error("Wallet not connected");
       }
-      return withRequiredSigner(signTransaction, async (signer) => {
+      if (signTransaction) {
         const response = await client.upload_sample(payload);
         response.needsNonInvokerSigningBy({ includeAlreadySigned: false });
         const txResponse = await response.signAndSend({
           force: true,
-          signTransaction: signer,
+          signTransaction: signTransaction,
         });
         return {
           id: response,
           transactionHash: txResponse.getTransactionResponse?.txHash ?? "",
           seller: payload.seller,
         };
-      });
+      }
+
+      throw new Error("Unable to sign transaction");
     },
     onSuccess(data) {
       queryClient.invalidateQueries({
