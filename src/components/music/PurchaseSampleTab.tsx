@@ -10,7 +10,6 @@ import {
 } from "../../hooks/useSampledContract";
 import { connectWallet } from "../../util/wallet";
 import { downloadAudio } from "../../util/download-audio";
-import { hasPurchasedSample } from "../../util/hasPurchasedSample";
 import { useWallet } from "../../hooks/useWallet";
 import { toast } from "sonner";
 import { BsCheckCircleFill } from "react-icons/bs";
@@ -23,16 +22,13 @@ export const PurchaseSampleTab = ({ sample }: { sample: Sample }) => {
     isPending: isCheckingPurchase,
     isError: hasPurchaseStatusError,
     refetch: refetchPurchaseStatus,
-  } = useHasPurchased(sample.id);
+  } = useHasPurchased(sample?.id);
   const { mutate: purchaseSample, isPending: isPurchasing } =
     usePurchaseSample();
   const { address } = useWallet();
   const isSeller = address === sample?.seller;
   const purchaseStatusUnknown =
     Boolean(address) && (isCheckingPurchase || hasPurchaseStatusError);
-  const { data: purchases, refetch: refetchUserPurchases } =
-    useGetUserPurchases();
-  const hasPurchased = hasPurchasedSample(purchases, sample);
 
   const handlePurchase = async () => {
     if (!address) {
